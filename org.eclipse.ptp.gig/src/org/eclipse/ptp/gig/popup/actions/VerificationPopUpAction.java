@@ -2,7 +2,9 @@ package org.eclipse.ptp.gig.popup.actions;
 
 import java.io.IOException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -19,9 +21,10 @@ public class VerificationPopUpAction implements IObjectActionDelegate {
 		Object[] oa = selection.toArray();
 		if (oa.length != 0) {
 			Object o = oa[0];
-			String filename = o.toString();
+			IFile file = (IFile) o;
+			IPath filePath = file.getFullPath();
 			try {
-				GIGUtilities.processSource(filename);
+				GIGUtilities.processSource(filePath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

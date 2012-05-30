@@ -7,6 +7,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ptp.gig.GIGUtilities;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -32,9 +33,9 @@ public class GIGHandler extends AbstractHandler {
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
-			String filename = file.toString();
+			IPath filePath = file.getFullPath();
 			try {
-				GIGUtilities.processSource(filename);
+				GIGUtilities.processSource(filePath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

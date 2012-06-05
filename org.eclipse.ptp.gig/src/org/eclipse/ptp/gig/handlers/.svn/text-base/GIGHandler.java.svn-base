@@ -7,47 +7,44 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.GIGUtilities;
+import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GIGHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO Auto-generated method stub
-		// GIGView view = GIGView.getDefault();
-		// IStatusLineManager manager = view.getViewSite().getActionBars().getStatusLineManager();
-		// manager.setMessage(Messages.GIG_ToolBarButtonPressed0);
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
-		IWorkbenchPage page = window.getActivePage();
-		IEditorPart editor = page.getActiveEditor();
-		IEditorInput input = editor.getEditorInput();
+		IEditorInput input = HandlerUtil.getActiveEditorInput(event);
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput fileInput = (IFileEditorInput) input;
 			IFile file = fileInput.getFile();
-			String filename = file.toString();
-			try {
-				GIGUtilities.processSource(filename);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			final IPath filePath = file.getFullPath();
+
+			// start it in a new thread so as to not block UI thread
+			(new Thread() {
+				@Override
+				public void run() {
+					try {
+						GIGUtilities.processSource(filePath);
+					} catch (IOException e) {
+						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IOException, e));
+					} catch (CoreException e) {
+						StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
+					} catch (InterruptedException e) {
+						StatusManager.getManager().handle(
+								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.InterruptedException, e));
+					}
+				}
+			}).start();
 		}
 
 		return null;
 	}
-
 }

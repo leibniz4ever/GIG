@@ -19,10 +19,7 @@ import org.osgi.framework.BundleContext;
  */
 public class GIGPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.ptp.gig"; //$NON-NLS-1$
-
-	// The shared instance
 	private static GIGPlugin plugin;
 
 	/**

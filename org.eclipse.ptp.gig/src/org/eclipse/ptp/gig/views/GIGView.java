@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ptp.gig.views;
 
+import org.eclipse.ptp.gig.GkleeLog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 public class GIGView extends ViewPart {
 
+	public static final String ID = "org.eclipse.ptp.gig.views.GIGView"; //$NON-NLS-1$
 	private static GIGView view;
 
 	public GIGView() {
@@ -36,6 +38,14 @@ public class GIGView extends ViewPart {
 
 	public static GIGView getDefault() {
 		return view;
+	}
+
+	/*
+	 * Takes a GkleeLog and updates this views components based on it
+	 */
+	public void update(GkleeLog gkleeLog) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

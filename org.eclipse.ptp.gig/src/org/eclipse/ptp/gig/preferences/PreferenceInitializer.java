@@ -15,27 +15,27 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		// find the HOME directory as a start
 		ProcessBuilder pb = new ProcessBuilder();
 		Map<String, String> env = pb.environment();
-		String HOME_value = env.get("HOME"); //$NON-NLS-1$
+		String home = env.get("HOME"); //$NON-NLS-1$
 		pb = null;
 		env = null;
 
-		// build up all the other stuff
-		String GKLEE_HOME_value = HOME_value + "/gklee"; //$NON-NLS-1$
-		String FLA_KLEE_HOME_DIR_value = GKLEE_HOME_value;
-		String Gklee_DebugPlusAsserts_bin_value = GKLEE_HOME_value + "/Gklee/Debug+Asserts/bin"; //$NON-NLS-1$
-		String llvm_DebugPlusAsserts_bin_value = GKLEE_HOME_value + "/llvm-2.8/Debug+Asserts/bin"; //$NON-NLS-1$
-		String llvm_gcc_linux_bin_value = GKLEE_HOME_value + "/llvm-gcc4.2-2.8-x86_64-linux/bin"; //$NON-NLS-1$
-		String bin = GKLEE_HOME_value + "/bin"; //$NON-NLS-1$
-		String other_PATH_value = ""; //$NON-NLS-1$
+		// assume default installation directories
+		String gkleeHome = home + "/gklee"; //$NON-NLS-1$
+		String flaKleeHomeDir = gkleeHome;
+		String gkleeDebugPlusAssertsBin = gkleeHome + "/Gklee/Debug+Asserts/bin"; //$NON-NLS-1$
+		String llvmDebugPlusAssertsBin = gkleeHome + "/llvm-2.8/Debug+Asserts/bin"; //$NON-NLS-1$
+		String llvmGccLinuxBin = gkleeHome + "/llvm-gcc4.2-2.8-x86_64-linux/bin"; //$NON-NLS-1$
+		String bin = gkleeHome + "/bin"; //$NON-NLS-1$
+		String otherPATH = ""; //$NON-NLS-1$
 
 		pstore.setDefault(GIGPreferencePage.LOCAL, false);
-		pstore.setDefault(GIGPreferencePage.GKLEE_HOME, GKLEE_HOME_value);
-		pstore.setDefault(GIGPreferencePage.FLA_KLEE_HOME_DIR, FLA_KLEE_HOME_DIR_value);
-		pstore.setDefault(GIGPreferencePage.Gklee_DebugPlusAsserts_bin, Gklee_DebugPlusAsserts_bin_value);
-		pstore.setDefault(GIGPreferencePage.llvm_DebugPlusAsserts_bin, llvm_DebugPlusAsserts_bin_value);
-		pstore.setDefault(GIGPreferencePage.llvm_gcc_linux_bin, llvm_gcc_linux_bin_value);
-		pstore.setDefault(GIGPreferencePage.bin, bin);
-		pstore.setDefault(GIGPreferencePage.other_PATH, other_PATH_value);
+		pstore.setDefault(GIGPreferencePage.GKLEE_HOME, gkleeHome);
+		pstore.setDefault(GIGPreferencePage.FLA_KLEE_HOME_DIR, flaKleeHomeDir);
+		pstore.setDefault(GIGPreferencePage.GKLEE_DEBUG_PLUS_ASSERTS_BIN, gkleeDebugPlusAssertsBin);
+		pstore.setDefault(GIGPreferencePage.LLVM_DEBUG_PLUS_ASSERTS_BIN, llvmDebugPlusAssertsBin);
+		pstore.setDefault(GIGPreferencePage.LLVM_GCC_LINUX_BIN, llvmGccLinuxBin);
+		pstore.setDefault(GIGPreferencePage.BIN, bin);
+		pstore.setDefault(GIGPreferencePage.ADDITIONAL_PATH, otherPATH);
 		/*
 		 * String HOME = "HOME"; //$NON-NLS-1$
 		 * String HOME_value = env.get(HOME);

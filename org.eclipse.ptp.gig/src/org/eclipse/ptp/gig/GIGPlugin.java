@@ -46,6 +46,7 @@ public class GIGPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		GIGUtilities.stopJob();
 		plugin = null;
 		super.stop(context);
 	}

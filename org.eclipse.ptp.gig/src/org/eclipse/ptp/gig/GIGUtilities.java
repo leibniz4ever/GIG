@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -16,14 +18,43 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ptp.gig.log.GkleeLog;
+import org.eclipse.ptp.gig.log.LogException;
+import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.preferences.GIGPreferencePage;
 import org.eclipse.ptp.gig.views.GIGView;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /*
  * Contains most of the logical code of the plug-in
  */
 public class GIGUtilities {
+
+	public enum JobState {
+		None,
+		Running,
+		Canceled
+	}
+
+	private static Job job;
+	private static Lock jobsLock = new ReentrantLock();
+	private static volatile JobState jobState = JobState.None;
+
+	public static JobState getJobState() {
+		return jobState;
+	}
+
+	public static void setJobState(JobState newState) {
+		jobsLock.lock();
+		jobState = newState;
+		jobsLock.unlock();
+	}
 
 	/*
 	 * This will process the source, binary or log file passed to it
@@ -40,7 +71,8 @@ public class GIGUtilities {
 			processLog(filePath);
 			return;
 		}
-		else if (!fileExtension.equals("cu")) { //$NON-NLS-1$
+		else if (!fileExtension.equals("cu") && !fileExtension.equals("C") && !fileExtension.equals("c")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// TODO indicate an error
 			return;
 		}
 
@@ -188,7 +220,73 @@ public class GIGUtilities {
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 		IFile logFile = workspaceRoot.getFile(logPath);
 		InputStream logInputStream = logFile.getContents();
-		GkleeLog gkleeLog = new GkleeLog(logInputStream);
-		GIGView.getDefault().update(gkleeLog);
+		try {
+			final GkleeLog gkleeLog = new GkleeLog(logInputStream);
+			UIJob job = new UIJob(Messages.UPDATE_GIG) {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					GIGView.getDefault().update(gkleeLog);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setPriority(UIJob.INTERACTIVE);
+			job.schedule();
+		} catch (IllegalStateException e) {
+			StatusManager.getManager().handle(
+					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PARSE_EXCEPTION, e));
+		} catch (LogException e) {
+			StatusManager.getManager().handle(
+					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.LOG_EXCEPTION_THREAD_BANK_CONFLICT));
+		}
+	}
+
+	public static void startJob(Job job) {
+		jobsLock.lock();
+		try {
+			if (jobState == JobState.None) {
+				GIGUtilities.job = job;
+				job.setPriority(Job.LONG);
+				job.schedule();
+				jobState = JobState.Running;
+			}
+		} finally {
+			jobsLock.unlock();
+		}
+	}
+
+	/*
+	 * Used to correctly stop the job midway through for both canceling and exiting purposes
+	 */
+	public static void stopJob() {
+		jobsLock.lock();
+		if (jobState == JobState.Running) {
+			jobState = JobState.Canceled;
+			jobsLock.unlock();
+			int i = 1000;
+			/*
+			 * We are waiting and giving the job time to cleanly exit itself, it will signal us by changing the jobState to
+			 * None.
+			 * Or we wait for timeout and kill it with a cancel
+			 */
+			while (jobState == JobState.Canceled && i > 0) {
+				try {
+					Thread.sleep(1);
+					i--;
+				} catch (InterruptedException e) {
+					StatusManager.getManager().handle(
+							new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
+				}
+			}
+			if (i <= 0) {
+				job.cancel();
+				job = null;
+				jobsLock.lock();
+				jobState = JobState.None;
+				jobsLock.unlock();
+			}
+		}
+		else {
+			jobsLock.unlock();
+		}
 	}
 }

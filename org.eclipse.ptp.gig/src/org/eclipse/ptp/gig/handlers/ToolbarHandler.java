@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.GIGUtilities;
+import org.eclipse.ptp.gig.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.views.GIGView;
 import org.eclipse.ui.IEditorInput;
@@ -54,6 +55,7 @@ public class ToolbarHandler extends AbstractHandler {
 					try {
 						// TODO add a return type or something so that we can check if OK or cancelled
 						GIGUtilities.processSource(filePath);
+						GIGUtilities.setJobState(JobState.None);
 						return Status.OK_STATUS;
 					} catch (IOException e) {
 						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
@@ -63,13 +65,15 @@ public class ToolbarHandler extends AbstractHandler {
 						StatusManager.getManager().handle(
 								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
 					}
+					finally {
+						GIGUtilities.setJobState(JobState.None);
+					}
 					return Status.CANCEL_STATUS;
 				}
 
 			};
 
-			job.setPriority(Job.LONG);
-			job.schedule();
+			GIGUtilities.startJob(job);
 
 			// (new Thread() {
 			// @Override

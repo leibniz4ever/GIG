@@ -1,0 +1,86 @@
+Configuration: concurrency bug checking level is: 1
+
+GKLEE: Start executing a GPU kernel 
+
+Deadlock Checking at Block 0: 
+
+**************************** Start checking bank conflicts at SharedMemory 0... ***********************************
+The read set is empty in bank conflict checking for capability 2.x
+
+********************************* Start checking memory coalescing at DeviceMemory at capability: 2.x... *************************************
+
+GKLEE: ********** CAPACITY 2.x Inst By Whole Warp ( 1 ) *************
+GKLEE: The word size accessed by threads: 4, the 1th request over total 1 requests
+GKLEE: +++++++++++++++++++++++++++++++++++++++++++++++++++++
+GKLEE: This request is coalesced into one memory segment (128 Bytes) accessed by 4 threads
+GKLEE: +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+GKLEE: ********** CAPACITY 2.x Inst By Whole Warp ( 2 ) *************
+GKLEE: The word size accessed by threads: 4, the 1th request over total 1 requests
+GKLEE: +++++++++++++++++++++++++++++++++++++++++++++++++++++
+GKLEE: This request is coalesced into one memory segment (128 Bytes) accessed by 4 threads
+GKLEE: +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+GKLEE: The write set for memory coalescing cap 2 is empty
+
+********************************* Start checking warp divergence ****************************
+In warp 0, threads are diverged into following sub-sets: 
+Set 0:
+Thread 0 , Thread 1 , Thread 2 , Thread 3 , 
+Set 1:
+Thread 4 , Thread 5 , Thread 6 , Thread 7 , Thread 8 , Thread 9 , Thread 10 , Thread 11 , Thread 12 , Thread 13 , Thread 14 , Thread 15 , Thread 16 , Thread 17 , Thread 18 , Thread 19 , Thread 20 , Thread 21 , Thread 22 , Thread 23 , Thread 24 , Thread 25 , Thread 26 , Thread 27 , Thread 28 , Thread 29 , Thread 30 , Thread 31 , 
+In warp 1, threads are diverged into following sub-sets: 
+Set 0:
+Thread 32 , Thread 33 , Thread 34 , Thread 35 , Thread 36 , Thread 37 , Thread 38 , Thread 39 , Thread 40 , Thread 41 , Thread 42 , Thread 43 , Thread 44 , Thread 45 , Thread 46 , Thread 47 , Thread 48 , Thread 49 , Thread 50 , Thread 51 , Thread 52 , Thread 53 , Thread 54 , Thread 55 , Thread 56 , Thread 57 , Thread 58 , Thread 59 , Thread 60 , Thread 61 , Thread 62 , Thread 63 , 
+In warp 2, threads are diverged into following sub-sets: 
+Set 0:
+Thread 64 , Thread 65 , Thread 66 , Thread 67 , Thread 68 , Thread 69 , Thread 70 , Thread 71 , Thread 72 , Thread 73 , Thread 74 , Thread 75 , Thread 76 , Thread 77 , Thread 78 , Thread 79 , Thread 80 , Thread 81 , Thread 82 , Thread 83 , Thread 84 , Thread 85 , Thread 86 , Thread 87 , Thread 88 , Thread 89 , Thread 90 , Thread 91 , Thread 92 , Thread 93 , Thread 94 , Thread 95 , 
+In warp 3, threads are diverged into following sub-sets: 
+Set 0:
+Thread 96 , Thread 97 , Thread 98 , Thread 99 , Thread 100 , Thread 101 , Thread 102 , Thread 103 , Thread 104 , Thread 105 , Thread 106 , Thread 107 , Thread 108 , Thread 109 , Thread 110 , Thread 111 , Thread 112 , Thread 113 , Thread 114 , Thread 115 , Thread 116 , Thread 117 , Thread 118 , Thread 119 , Thread 120 , Thread 121 , Thread 122 , Thread 123 , Thread 124 , Thread 125 , Thread 126 , Thread 127 , 
+In warp 4, threads are diverged into following sub-sets: 
+Set 0:
+Thread 128 , Thread 129 , Thread 130 , Thread 131 , Thread 132 , Thread 133 , Thread 134 , Thread 135 , Thread 136 , Thread 137 , Thread 138 , Thread 139 , Thread 140 , Thread 141 , Thread 142 , Thread 143 , Thread 144 , Thread 145 , Thread 146 , Thread 147 , Thread 148 , Thread 149 , Thread 150 , Thread 151 , Thread 152 , Thread 153 , Thread 154 , Thread 155 , Thread 156 , Thread 157 , Thread 158 , Thread 159 , 
+In warp 5, threads are diverged into following sub-sets: 
+Set 0:
+Thread 160 , Thread 161 , Thread 162 , Thread 163 , Thread 164 , Thread 165 , Thread 166 , Thread 167 , Thread 168 , Thread 169 , Thread 170 , Thread 171 , Thread 172 , Thread 173 , Thread 174 , Thread 175 , Thread 176 , Thread 177 , Thread 178 , Thread 179 , Thread 180 , Thread 181 , Thread 182 , Thread 183 , Thread 184 , Thread 185 , Thread 186 , Thread 187 , Thread 188 , Thread 189 , Thread 190 , Thread 191 , 
+In warp 6, threads are diverged into following sub-sets: 
+Set 0:
+Thread 192 , Thread 193 , Thread 194 , Thread 195 , Thread 196 , Thread 197 , Thread 198 , Thread 199 , Thread 200 , Thread 201 , Thread 202 , Thread 203 , Thread 204 , Thread 205 , Thread 206 , Thread 207 , Thread 208 , Thread 209 , Thread 210 , Thread 211 , Thread 212 , Thread 213 , Thread 214 , Thread 215 , Thread 216 , Thread 217 , Thread 218 , Thread 219 , Thread 220 , Thread 221 , Thread 222 , Thread 223 , 
+In warp 7, threads are diverged into following sub-sets: 
+Set 0:
+Thread 224 , Thread 225 , Thread 226 , Thread 227 , Thread 228 , Thread 229 , Thread 230 , Thread 231 , Thread 232 , Thread 233 , Thread 234 , Thread 235 , Thread 236 , Thread 237 , Thread 238 , Thread 239 , Thread 240 , Thread 241 , Thread 242 , Thread 243 , Thread 244 , Thread 245 , Thread 246 , Thread 247 , Thread 248 , Thread 249 , Thread 250 , Thread 251 , Thread 252 , Thread 253 , Thread 254 , Thread 255 , 
+
+*****************************************************************
+
+****************************************** Start checking races at SharedMemory 0... *********************************************
+Threads (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, ) wait at the explicit __syncthreads()
+Threads (128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, ) wait at the re-convergence point, not __syncthreads()
+path num explored here: 1
++++++++++++++++++ Bank Conflict Rate: +++++++++++++++++
+Across 1 BIs, the total num of instructions with BC : 0, the total num of instructions: 8
+Across 1 BIs, the total num of warps with BC : 0, the total num of warps: 8
+In shared memory 0, num of BIs with BC: 0, num of BIs: 1
+
+GKLEE: The Average 'Warp' Bank Conflict Rate for all shared memories at path 1 : 0%, <avgBCWarp, avgWarp> : <0, 8>
+
+GKLEE: The Average 'BI' Bank Conflict Rate for all shared memories at path 1 : 0%, <avgBCBI, avgBI> : <0, 1>
++++++++++++++++++ end +++++++++++++++++
++++++++++++++++++ Memory Coalescing Rate: +++++++++++++++++
+Across 1 BIs, the total num of read instructions with MC: 2, the total number of read instructions: 2
+Across 1 BIs, the total num of write instructions with MC: 0, the total number of write instructions: 0
+Across 1 BIs, the total num of warps with MC: 1, the total num of warps: 1
+num of BIs with MC: 1, num of BIs: 1
+
+GKLEE: The Average 'Warp' Memory Coalescing Rate at path 1 : 100%, <avgMCWarp, avgWarp> : <1, 1>
+
+GKLEE: The Average 'BI' Memory Coalescing Rate at path 1 : 100%, <avgMCBI, avgBI> : <1, 1>
++++++++++++++++++ end +++++++++++++++++
++++++++++++++++++ Warp Divergence Rate: +++++++++++++++++
+Across 1 BIs, the total num of warps with WD: 1, the total num of warps: 8
+num of BIs with WD: 1, num of BIs: 1
+
+GKLEE: The Average 'Warp' Warp Divergence Rate at path 1 : 12%, <avgWDWarp, avgWarp> : <1, 8>
+
+GKLEE: The Average 'BI' Warp Divergence Rate at path 1 : 100%, <avgWDBI, avgBI> : <1, 1>
++++++++++++++++++ end +++++++++++++++++

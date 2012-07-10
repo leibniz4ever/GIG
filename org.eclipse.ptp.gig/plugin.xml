@@ -42,7 +42,7 @@
          <toolbar id="org.eclipse.ptp.gig.toolbar">
              <command
                   commandId="org.eclipse.ptp.gig.commands.sourceToolbar"
-                  icon="icons/trident.gif"
+                  icon="icons/trident.png"
                   id="org.eclipse.ptp.gig.toolbar.refCommand"
                   style="pulldown"
                   tooltip="Formally Verify CUDA Program">
@@ -75,7 +75,7 @@
                mnemonic="G">
             <command
                   commandId="org.eclipse.ptp.gig.commands.sourcePopup"
-                  icon="icons/trident.gif"
+                  icon="icons/trident.png"
                   id="org.eclipse.ptp.gig.sourcePopupMenu"
                   mnemonic="F"
                   style="push">
@@ -111,7 +111,7 @@
       </category>
       <view
             name="GIG"
-            icon="icons/sample.gif"
+            icon="icons/trident.png"
             category="org.eclipse.ptp.gig"
             class="org.eclipse.ptp.gig.views.GIGView"
             id="org.eclipse.ptp.gig.views.GIGView">

@@ -19,6 +19,11 @@
             id="org.eclipse.ptp.gig.commands.sourcePopup"
             name="Formally Verify CUDA Program">
       </command>
+      <command
+      		categoryId="org.eclipse.ptp.gig.commands.category"
+      		id="org.eclipse.ptp.gig.commands.sendSourceToServer"
+      		name="Send Files and Folders to Server">
+      </command>
    </extension>
    
    <!-- Command Handlers -->
@@ -31,6 +36,10 @@
       <handler
             class="org.eclipse.ptp.gig.handlers.PopupHandler"
             commandId="org.eclipse.ptp.gig.commands.sourcePopup">
+      </handler>
+      <handler
+      		class="org.eclipse.ptp.gig.handlers.PopupHandler"
+      		commandId="org.eclipse.ptp.gig.commands.sendSourceToServer">
       </handler>
    </extension>
    
@@ -80,6 +89,13 @@
                   mnemonic="F"
                   style="push">
             </command>
+            <command
+            		commandId="org.eclipse.ptp.gig.commands.sendSourceToServer"
+            		icon="icons/trident.png"
+            		id="org.eclipse.ptp.gig.sendSourceToServerPopupMenu"
+            		mnemonic="S"
+            		style="push">
+            </command>
          </menu>
       </menuContribution>
     </extension>
@@ -116,6 +132,13 @@
             class="org.eclipse.ptp.gig.views.GIGView"
             id="org.eclipse.ptp.gig.views.GIGView">
       </view>
+      <view
+      		name="GIGServer"
+      		icon="icons/trident.png"
+      		category="org.eclipse.ptp.gig"
+      		class="org.eclipse.ptp.gig.views.ServerView"
+      		id="org.eclipse.ptp.gig.views.ServerView">
+      </view>
    </extension>
    
    	<!-- Views Perspective -->
@@ -129,6 +152,12 @@
             	relationship="stack"
                	id="org.eclipse.ptp.gig.views.GIGView">
          	</view>
+         	<view
+         		ratio="0.5"
+         		relative="org.eclipse.ui.views.ContentOutline"
+            	relationship="stack"
+            	id="org.eclipse.ptp.gig.views.ServerView">
+            </view>
       	</perspectiveExtension>
    	</extension>
    

@@ -10,6 +10,8 @@ public class Messages extends NLS {
 
 	public static String GIG_PREFERENCE_PAGE_0;
 	public static String GIG_PREFERENCE_PAGE_1;
+	public static String USERNAME;
+	public static String PASSWORD;
 	public static String IO_EXCEPTION;
 	public static String INTERRUPTED_EXCEPTION;
 	public static String RUN_GKLEE;
@@ -35,6 +37,12 @@ public class Messages extends NLS {
 	public static String THREAD_BANK_CONFLICT_THREAD_INFO_TO_STRING;
 	public static String MEMORY_COALESCING_BY_WHOLE_WARP;
 	public static String MEMORY_COALESCING_BY_WHOLE_WARP_TO_STRING;
+	public static String SERVER_HAD_AN_IOEXCEPTION;
+	public static String SEND_TO_SERVER;
+	public static String CORE_EXCEPTION;
+	public static String IMPORT;
+	public static String RESET;
+	public static String DELETE_REMOTE_FILE;
 
 	static {
 		// initialize resource bundle

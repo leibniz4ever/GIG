@@ -11,6 +11,7 @@
 package org.eclipse.ptp.gig;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

@@ -10,8 +10,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ptp.gig.GIGPlugin;
-import org.eclipse.ptp.gig.GIGUtilities;
 import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -35,12 +35,12 @@ public class VerificationPopUpAction implements IObjectActionDelegate {
 					try {
 						GIGUtilities.processSource(filePath);
 					} catch (IOException e) {
-						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IOException, e));
+						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
 					} catch (CoreException e) {
 						StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
 					} catch (InterruptedException e) {
 						StatusManager.getManager().handle(
-								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.InterruptedException, e));
+								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
 					}
 				}
 			}).start();

@@ -12,6 +12,7 @@ package org.eclipse.ptp.gig.views;
 
 import java.util.List;
 
+import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.log.GkleeLog;
 import org.eclipse.ptp.gig.log.MemoryCoalescingByWholeWarp;
 import org.eclipse.ptp.gig.log.ThreadBankConflict;
@@ -20,6 +21,7 @@ import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -31,6 +33,7 @@ public class GIGView extends ViewPart {
 	public static final String ID = "org.eclipse.ptp.gig.views.GIGView"; //$NON-NLS-1$
 	private static GIGView view;
 	private Tree memoryCoalescingTree, bankConflictTree, warpDivergenceTree, deadlockTree;
+	private CTabItem memoryCoalescingTab, bankConflictTab, warpDivergenceTab, deadlockTab;
 
 	private CTabFolder cTabFolder;
 
@@ -63,21 +66,25 @@ public class GIGView extends ViewPart {
 		cTabItem.setText(Messages.MEMORY_COALESCING);
 		this.memoryCoalescingTree = new Tree(cTabFolder, SWT.NONE);
 		cTabItem.setControl(this.memoryCoalescingTree);
+		this.memoryCoalescingTab = cTabItem;
 
 		cTabItem = new CTabItem(cTabFolder, SWT.NONE, 1);
 		cTabItem.setText(Messages.BANK_CONFLICTS);
 		this.bankConflictTree = new Tree(cTabFolder, SWT.NONE);
 		cTabItem.setControl(this.bankConflictTree);
+		this.bankConflictTab = cTabItem;
 
 		cTabItem = new CTabItem(cTabFolder, SWT.NONE, 2);
 		cTabItem.setText(Messages.WARP_DIVERGENCE);
 		this.warpDivergenceTree = new Tree(cTabFolder, SWT.NONE);
 		cTabItem.setControl(this.warpDivergenceTree);
+		this.warpDivergenceTab = cTabItem;
 
 		cTabItem = new CTabItem(cTabFolder, SWT.NONE, 3);
 		cTabItem.setText(Messages.DEADLOCKS);
 		this.deadlockTree = new Tree(cTabFolder, SWT.NONE);
 		cTabItem.setControl(this.deadlockTree);
+		this.deadlockTab = cTabItem;
 	}
 
 	@Override
@@ -104,6 +111,15 @@ public class GIGView extends ViewPart {
 
 	private void updateMemoryCoalescing(GkleeLog gkleeLog) {
 		this.memoryCoalescingTree.clearAll(true);
+		Image image;
+		// TODO change constant to preference
+		if (gkleeLog.aveWarpMemoryCoalescingRate > 50) {
+			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.memoryCoalescingTab.setImage(image);
 		TreeItem treeItem, subTreeItem;
 		treeItem = new TreeItem(this.memoryCoalescingTree, SWT.NONE);
 		treeItem.setText(Messages.MEMORY_COALESCING_BY_WHOLE_WARP);
@@ -116,6 +132,15 @@ public class GIGView extends ViewPart {
 
 	private void updateBankConflicts(GkleeLog gkleeLog) {
 		this.bankConflictTree.clearAll(true);
+		Image image;
+		// TODO change constant to preference
+		if (gkleeLog.aveWarpBankConflictRate > 50) {
+			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.bankConflictTab.setImage(image);
 		TreeItem treeItem, subTreeItem, subSubTreeItem;
 		treeItem = new TreeItem(this.bankConflictTree, SWT.NONE);
 		treeItem.setText(Messages.BANK_CONFLICTS_WITHIN_A_WARP);
@@ -146,6 +171,15 @@ public class GIGView extends ViewPart {
 
 	private void updateWarpDivergence(GkleeLog gkleeLog) {
 		this.warpDivergenceTree.clearAll(true);
+		Image image;
+		// TODO change constant to preference
+		if (gkleeLog.aveWarpDivergentRate > 50) {
+			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.warpDivergenceTab.setImage(image);
 		TreeItem treeItem, subTreeItem, subSubTreeItem;
 		for (int i = 0; i < gkleeLog.warpDivergences.size(); i++) {
 			WarpDivergence warpDivergence = gkleeLog.warpDivergences.get(i);
@@ -173,11 +207,14 @@ public class GIGView extends ViewPart {
 
 	private void updateDeadlocks(GkleeLog gkleeLog) {
 		this.deadlockTree.clearAll(true);
+		Image image;
 		if (gkleeLog.threadsThatWaitAtExplicitSyncThreads == null) {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
 			TreeItem treeItem = new TreeItem(this.deadlockTree, SWT.NONE);
 			treeItem.setText(Messages.NO_DEADLOCK);
 		}
 		else {
+			image = GIGPlugin.getImageDescriptor("icons/icon_error.gif").createImage(); //$NON-NLS-1$
 			TreeItem treeItem = new TreeItem(this.deadlockTree, SWT.NONE);
 			treeItem.setText(Messages.THREADS_THAT_WAIT_AT_EXPLICIT_SYNC_THREADS);
 			TreeItem subTreeItem;
@@ -196,5 +233,6 @@ public class GIGView extends ViewPart {
 			subTreeItem = new TreeItem(treeItem, SWT.NONE);
 			subTreeItem.setText(stringBuilder.toString());
 		}
+		this.deadlockTab.setImage(image);
 	}
 }

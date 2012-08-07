@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ptp.gig.GIGPlugin;
-import org.eclipse.ptp.gig.GIGUtilities;
-import org.eclipse.ptp.gig.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.util.GIGUtilities;
+import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.views.GIGView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -70,7 +70,6 @@ public class ToolbarHandler extends AbstractHandler {
 					}
 					return Status.CANCEL_STATUS;
 				}
-
 			};
 
 			GIGUtilities.startJob(job);

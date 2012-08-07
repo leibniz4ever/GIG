@@ -1,11 +1,17 @@
 package org.eclipse.ptp.gig.handlers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,29 +21,41 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ptp.gig.GIGPlugin;
-import org.eclipse.ptp.gig.GIGUtilities;
-import org.eclipse.ptp.gig.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.util.GIGUtilities;
+import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
+import org.eclipse.ptp.gig.util.IncorrectPasswordException;
 import org.eclipse.ptp.gig.views.GIGView;
+import org.eclipse.ptp.gig.views.ServerView;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 public class PopupHandler extends AbstractHandler {
 
+	@SuppressWarnings("restriction")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = HandlerUtil.getActiveMenuSelectionChecked(event);
-		selection = HandlerUtil.getCurrentSelectionChecked(event);
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			Object object = structuredSelection.getFirstElement();
-			if (object instanceof IFile) {
-				IFile file = (IFile) object;
+		String eventName = event.getCommand().getId();
+		if (eventName.equals("org.eclipse.ptp.gig.commands.sourcePopup")) { //$NON-NLS-1$
+			ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				Object object = structuredSelection.getFirstElement();
+				IFile file;
+				if (object instanceof IFile) {
+					file = (IFile) object;
+				}
+				else {
+					TranslationUnit unit = (TranslationUnit) object;
+					file = (IFile) unit.getUnderlyingResource();
+				}
+
 				final IPath filePath = file.getFullPath();
 
 				final IWorkbench wb = PlatformUI.getWorkbench();
@@ -73,6 +91,76 @@ public class PopupHandler extends AbstractHandler {
 							GIGUtilities.setJobState(JobState.None);
 						}
 						return Status.CANCEL_STATUS;
+					}
+
+				};
+
+				GIGUtilities.startJob(job);
+			}
+		}
+		else if (eventName.equals("org.eclipse.ptp.gig.commands.sendSourceToServer")) { //$NON-NLS-1$
+			ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				final Object[] objectArray = structuredSelection.toArray();
+
+				Job job = new Job(Messages.SEND_TO_SERVER) {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						List<IFolder> folders = new ArrayList<IFolder>();
+						List<IFile> files = new ArrayList<IFile>();
+						for (Object o : objectArray) {
+							if (o instanceof IFile) {
+								IFile file = (IFile) o;
+								files.add(file);
+							}
+							else if (o instanceof ICContainer) {
+								ICContainer container = (ICContainer) o;
+								IResource resource = container.getResource();
+								if (resource instanceof IFolder) {
+									IFolder folder = (IFolder) resource;
+									folders.add(folder);
+								}
+							}
+							else if (o instanceof TranslationUnit) {
+								TranslationUnit unit = (TranslationUnit) o;
+								IResource resource = unit.getResource();
+								if (resource instanceof IFile) {
+									IFile file = (IFile) resource;
+									files.add(file);
+								}
+							}
+						}
+						try {
+							GIGUtilities.sendFoldersAndFiles(folders, files);
+							UIJob job = new UIJob(Messages.IMPORT) {
+
+								@Override
+								public IStatus runInUIThread(IProgressMonitor monitor) {
+									ServerView.getDefault().reset();
+									return Status.OK_STATUS;
+								}
+
+							};
+							job.setPriority(UIJob.SHORT);
+							job.schedule();
+							return Status.OK_STATUS;
+						} catch (CoreException e) {
+							StatusManager.getManager().handle(
+									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
+							return Status.CANCEL_STATUS;
+						} catch (IOException e) {
+							StatusManager.getManager().handle(
+									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+							return Status.CANCEL_STATUS;
+						} catch (IncorrectPasswordException e) {
+							// TODO display a dialog that indicates "Incorrect Password" or something
+							return Status.CANCEL_STATUS;
+						}
+						finally {
+							GIGUtilities.setJobState(JobState.None);
+						}
 					}
 
 				};

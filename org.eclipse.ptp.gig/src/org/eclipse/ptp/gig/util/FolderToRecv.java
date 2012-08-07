@@ -1,0 +1,80 @@
+package org.eclipse.ptp.gig.util;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ptp.gig.views.ServerTreeItem;
+
+public class FolderToRecv {
+
+	private final String name;
+	private final List<FolderToRecv> folders = new ArrayList<FolderToRecv>();
+	private final List<String> files = new ArrayList<String>();
+
+	public FolderToRecv(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void addAll(Object[] objects) {
+		for (Object o : objects) {
+			ServerTreeItem item = (ServerTreeItem) o;
+			add(item);
+		}
+	}
+
+	/*
+	 * Adds the item and all children to this.
+	 */
+	private void add(ServerTreeItem item) {
+		if (item.isFolder()) {
+			FolderToRecv folder = this.getFolder(item.getName());
+			folder.addAll(item.getChildren());
+		}
+		else {
+			this.add(item.getName());
+		}
+	}
+
+	/*
+	 * Adds the string to the set of files. The unique property of the set is enforced by this function
+	 */
+	public void add(String name) {
+		for (String s : files) {
+			if (s.equals(name)) {
+				return;
+			}
+		}
+		files.add(name);
+	}
+
+	/*
+	 * Sends this folder and all its contents, and receives the corresponding info.
+	 */
+	public void sendNamesRecvData(IContainer container) throws IOException, CoreException {
+		GIGUtilities.sendNamesRecvData(container, name, folders, files);
+	}
+
+	/*
+	 * Checks if this folder already exists in the list folders.
+	 * If it does, returns the folder.
+	 * If not, it creates the folder, adds it to folders, then returns it.
+	 */
+	public FolderToRecv getFolder(String name2) {
+		for (FolderToRecv folder : folders) {
+			if (folder.getName().equals(name2)) {
+				return folder;
+			}
+		}
+		FolderToRecv folder = new FolderToRecv(name2);
+		folders.add(folder);
+		return folder;
+	}
+
+}

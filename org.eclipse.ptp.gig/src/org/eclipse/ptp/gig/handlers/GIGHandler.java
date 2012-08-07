@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ptp.gig.GIGPlugin;
-import org.eclipse.ptp.gig.GIGUtilities;
 import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -34,12 +34,12 @@ public class GIGHandler extends AbstractHandler {
 					try {
 						GIGUtilities.processSource(filePath);
 					} catch (IOException e) {
-						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IOException, e));
+						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
 					} catch (CoreException e) {
 						StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
 					} catch (InterruptedException e) {
 						StatusManager.getManager().handle(
-								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.InterruptedException, e));
+								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
 					}
 				}
 			}).start();

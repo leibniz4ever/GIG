@@ -14,6 +14,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class GIGPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String LOCAL = Messages.GIG_PREFERENCE_PAGE_1;
+	public static final String USERNAME = Messages.USERNAME;
+	public static final String PASSWORD = Messages.PASSWORD;
 	public static final String GKLEE_HOME = "GKLEE_HOME"; //$NON-NLS-1$
 	public static final String FLA_KLEE_HOME_DIR = "FLA_KLEE_HOME_DIR"; //$NON-NLS-1$
 	public static final String GKLEE_DEBUG_PLUS_ASSERTS_BIN = "Gklee Debug+Asserts bin"; //$NON-NLS-1$
@@ -30,16 +32,20 @@ public class GIGPreferencePage extends FieldEditorPreferencePage implements IWor
 	@Override
 	protected void createFieldEditors() {
 		Composite composite = this.getFieldEditorParent();
-		Group group = new Group(composite, SWT.NULL);
+		Group localRemoteGroup = new Group(composite, SWT.NULL);
+		Group remoteGroup = new Group(localRemoteGroup, SWT.NULL);
+		Group localGroup = new Group(localRemoteGroup, SWT.NULL);
 		this.addField(new BooleanFieldEditor(LOCAL, Messages.GIG_PREFERENCE_PAGE_1,
-				BooleanFieldEditor.DEFAULT, group));
-		this.addField(new StringFieldEditor(GKLEE_HOME, GKLEE_HOME, group));
-		this.addField(new StringFieldEditor(FLA_KLEE_HOME_DIR, FLA_KLEE_HOME_DIR, group));
-		this.addField(new StringFieldEditor(GKLEE_DEBUG_PLUS_ASSERTS_BIN, GKLEE_DEBUG_PLUS_ASSERTS_BIN, group));
-		this.addField(new StringFieldEditor(LLVM_DEBUG_PLUS_ASSERTS_BIN, LLVM_DEBUG_PLUS_ASSERTS_BIN, group));
-		this.addField(new StringFieldEditor(LLVM_GCC_LINUX_BIN, LLVM_GCC_LINUX_BIN, group));
-		this.addField(new StringFieldEditor(BIN, BIN, group));
-		this.addField(new StringFieldEditor(ADDITIONAL_PATH, ADDITIONAL_PATH, group));
+				BooleanFieldEditor.DEFAULT, localRemoteGroup));
+		this.addField(new StringFieldEditor(GIGPreferencePage.USERNAME, GIGPreferencePage.USERNAME, remoteGroup));
+		this.addField(new StringFieldEditor(GIGPreferencePage.PASSWORD, GIGPreferencePage.PASSWORD, remoteGroup));
+		this.addField(new StringFieldEditor(GKLEE_HOME, GKLEE_HOME, localGroup));
+		this.addField(new StringFieldEditor(FLA_KLEE_HOME_DIR, FLA_KLEE_HOME_DIR, localGroup));
+		this.addField(new StringFieldEditor(GKLEE_DEBUG_PLUS_ASSERTS_BIN, GKLEE_DEBUG_PLUS_ASSERTS_BIN, localGroup));
+		this.addField(new StringFieldEditor(LLVM_DEBUG_PLUS_ASSERTS_BIN, LLVM_DEBUG_PLUS_ASSERTS_BIN, localGroup));
+		this.addField(new StringFieldEditor(LLVM_GCC_LINUX_BIN, LLVM_GCC_LINUX_BIN, localGroup));
+		this.addField(new StringFieldEditor(BIN, BIN, localGroup));
+		this.addField(new StringFieldEditor(ADDITIONAL_PATH, ADDITIONAL_PATH, localGroup));
 	}
 
 	@Override

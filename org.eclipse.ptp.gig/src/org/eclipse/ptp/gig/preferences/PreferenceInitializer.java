@@ -29,6 +29,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		String otherPATH = ""; //$NON-NLS-1$
 
 		pstore.setDefault(GIGPreferencePage.LOCAL, false);
+		pstore.setDefault(GIGPreferencePage.USERNAME, "gklee"); //$NON-NLS-1$
+		pstore.setDefault(GIGPreferencePage.PASSWORD, ""); //$NON-NLS-1$
 		pstore.setDefault(GIGPreferencePage.GKLEE_HOME, gkleeHome);
 		pstore.setDefault(GIGPreferencePage.FLA_KLEE_HOME_DIR, flaKleeHomeDir);
 		pstore.setDefault(GIGPreferencePage.GKLEE_DEBUG_PLUS_ASSERTS_BIN, gkleeDebugPlusAssertsBin);

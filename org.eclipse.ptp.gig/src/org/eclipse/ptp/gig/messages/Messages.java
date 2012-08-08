@@ -41,8 +41,9 @@ public class Messages extends NLS {
 	public static String SEND_TO_SERVER;
 	public static String CORE_EXCEPTION;
 	public static String IMPORT;
-	public static String RESET;
+	public static String REFRESH;
 	public static String DELETE_REMOTE_FILE;
+	public static String RESET_SERVER_VIEW;
 
 	static {
 		// initialize resource bundle

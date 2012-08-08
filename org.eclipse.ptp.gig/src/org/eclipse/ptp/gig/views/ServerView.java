@@ -58,8 +58,8 @@ public class ServerView extends ViewPart {
 				reset();
 			}
 		};
-		resetAction.setText(Messages.RESET);
-		resetAction.setToolTipText(Messages.RESET);
+		resetAction.setText(Messages.REFRESH);
+		resetAction.setToolTipText(Messages.REFRESH);
 		resetAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/refresh.gif")); //$NON-NLS-1$
 
 		deleteAction = new Action() {
@@ -188,6 +188,9 @@ public class ServerView extends ViewPart {
 		}
 	}
 
+	/*
+	 * To be called from anywhere to reset this. Does require the current thread to be the UI thread though.
+	 */
 	public void reset() {
 		IContentProvider contentProvider = new ServerContentProvider();
 		treeViewer.setContentProvider(contentProvider);

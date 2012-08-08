@@ -36,6 +36,7 @@ import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.preferences.GIGPreferencePage;
 import org.eclipse.ptp.gig.views.GIGView;
 import org.eclipse.ptp.gig.views.ServerTreeItem;
+import org.eclipse.ptp.gig.views.ServerView;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -87,54 +88,81 @@ public class GIGUtilities {
 			return;
 		}
 
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		// IProject project = workspaceRoot.getFile(filePath).getProject();
+
 		// If we are doing a remote execution, now is the time to go over to it
+		IFile origFile = workspaceRoot.getFile(filePath);
 		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
 		boolean local = preferenceStore.getBoolean(GIGPreferencePage.LOCAL);
 		if (!local) {
 			try {
-				sendSelection(new IPath[] { filePath });
-				requestVerification(filePath);
+				// First send the file over
+				List<IFile> fileList = new ArrayList<IFile>();
+				fileList.add(origFile);
+				sendFoldersAndFiles(new ArrayList<IFolder>(), fileList);
+
+				requestVerification(origFile.getProject(), origFile.getProjectRelativePath());
+
+				// TODO needs to be its own job on UI thread
+				UIJob job = new UIJob(Messages.RESET_SERVER_VIEW) {
+
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						ServerView.getDefault().reset();
+						return Status.OK_STATUS;
+					}
+
+				};
+				startJob(job);
 			} catch (IncorrectPasswordException ipe) {
 				// TODO open up dialog that says "Incorrect Password, change it under preferences" or something
 			}
 			return;
 		}
 
-		// make the gig directory which will hold all relevant files
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		IProject project = workspaceRoot.getFile(filePath).getProject();
-		IFolder gigFolder = project.getFolder("gig"); //$NON-NLS-1$
-		if (!gigFolder.exists()) {
-			// TODO fix null
-			gigFolder.create(true, true, null);
-		}
-
 		// now prepare the executable path
-		IPath folderPath = gigFolder.getFullPath();
-		int segments = filePath.segmentCount();
-		IPath filename = filePath.removeFirstSegments(segments - 1).removeFileExtension();
-		filename = folderPath.append(filename);
-		IPath exec = filename.addFileExtension("gig"); //$NON-NLS-1$
-		filename = filename.addFileExtension("C"); //$NON-NLS-1$
+		IContainer gigContainer = origFile.getParent();
+		// IPath folderPath = gigFolder.getFullPath();
+		// int segments = filePath.segmentCount();
+		// IPath filename = filePath.removeFirstSegments(segments - 1).removeFileExtension();
+		// filename = folderPath.append(filename);
+		IPath binaryPath = filePath.removeFileExtension().addFileExtension("gig");//= filename.addFileExtension("gig"); //$NON-NLS-1$
+		//filename = filename.addFileExtension("C"); //$NON-NLS-1$
 
+		// klee-l++ can't handle the .cu extension, so make a link to it
+		IFile currFile;
+		if (fileExtension.equals("cu")) { //$NON-NLS-1$
+			IPath newPath = filePath.removeFileExtension().addFileExtension("C"); //$NON-NLS-1$
+			currFile = gigContainer.getFile(newPath);
+			if (currFile.exists()) {
+				// TODO fix null
+				currFile.delete(true, null);
+			}
+			// TODO fix nulls
+			origFile.createLink(newPath, 0, null);
+			gigContainer.refreshLocal(1, null);
+		}
+		else {
+			currFile = origFile;
+		}
 		/*
 		 * copy the file over to the gig folder so that gklee can work entirely in that directory, also gklee requires *.c format
 		 * files
 		 */
-		IFile origFile = (IFile) workspaceRoot.findMember(filePath);
-		IResource resource = workspaceRoot.findMember(filename);
-		if (resource != null && resource.exists()) {
-			// TODO fix null
-			resource.delete(true, null);
-		}
-		// TODO fix null's
-		origFile.copy(filename, true, null);
-		workspaceRoot.findMember(folderPath).refreshLocal(1, null);
+		// IFile origFile = (IFile) workspaceRoot.findMember(filePath);
+		// IResource resource = workspaceRoot.findMember(filename);
+		// if (resource != null && resource.exists()) {
+		// // TODO fix null
+		// resource.delete(true, null);
+		// }
+		// // TODO fix null's
+		// currFile.copy(filename, true, null);
 
 		// begin building the command line with absolute (not relative paths), expecially from the preferenceStore
 		String sourceOSPath, binaryOSPath;
-		IPath sourceAbsoluteIPath = workspaceRoot.findMember(filename).getLocation();
+		IPath sourceAbsoluteIPath = currFile.getLocation();
 		sourceOSPath = sourceAbsoluteIPath.toOSString();
 		binaryOSPath = sourceAbsoluteIPath.removeFileExtension().addFileExtension("gig").toOSString(); //$NON-NLS-1$
 		String kleeOSPath = preferenceStore.getString(GIGPreferencePage.BIN) + "/klee-l++"; //$NON-NLS-1$
@@ -160,82 +188,69 @@ public class GIGUtilities {
 
 		// refresh environment so that eclipse is aware of the new binary
 		// TODO fix null
-		gigFolder.refreshLocal(1, null);
+		gigContainer.refreshLocal(1, null);
 
-		processBinary(exec);
+		processBinary(binaryPath);
 	}
 
-	private static void sendSelection(IPath[] iPaths) throws IOException, CoreException, IncorrectPasswordException {
-		try {
-			// TODO redo this to conform with new protocols
-			initializeConnection(0);
-			sendFolders(new IPath[0]);
-			sendFiles(new IPath[] { iPaths[0] });
-			closeConnection();
-		} catch (CoreException ce) {
-			// TODO handle it
-		}
-	}
+	// private static void sendSelection(IPath[] iPaths) throws IOException, CoreException, IncorrectPasswordException {
+	// try {
+	// // TODO redo this to conform with new protocols
+	// initializeConnection(0);
+	// sendFolders(new IPath[0]);
+	// sendFiles(new IPath[] { iPaths[0] });
+	// closeConnection();
+	// } catch (CoreException ce) {
+	// // TODO handle it
+	// }
+	// }
 
-	private static void sendFolders(IPath[] iPaths) throws IOException, CoreException {
-		sendInt(iPaths.length);
-		for (int i = 0; i < iPaths.length; i++) {
-			sendFolder(iPaths[i]);
-		}
-	}
+	// private static void sendFolders(IPath[] iPaths) throws IOException, CoreException {
+	// sendInt(iPaths.length);
+	// for (int i = 0; i < iPaths.length; i++) {
+	// sendFolder(iPaths[i]);
+	// }
+	// }
 
-	private static void sendFolder(IPath iPath) throws CoreException, IOException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IFolder folder = root.getFolder(iPath);
-		String folderName = folder.getName();
-		sendString(folderName);
-		IResource[] children = folder.members();
-		List<IFolder> folders = new ArrayList<IFolder>();
-		List<IFile> files = new ArrayList<IFile>();
-		for (IResource resource : children) {
-			if (resource instanceof IFolder) {
-				folders.add((IFolder) resource);
-			}
-			else if (resource instanceof IFile) {
-				files.add((IFile) resource);
-			}
-		}
-	}
+	// private static void sendFolder(IPath iPath) throws CoreException, IOException {
+	// IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	// IWorkspaceRoot root = workspace.getRoot();
+	// IFolder folder = root.getFolder(iPath);
+	// String folderName = folder.getName();
+	// sendString(folderName);
+	// IResource[] children = folder.members();
+	// List<IFolder> folders = new ArrayList<IFolder>();
+	// List<IFile> files = new ArrayList<IFile>();
+	// for (IResource resource : children) {
+	// if (resource instanceof IFolder) {
+	// folders.add((IFolder) resource);
+	// }
+	// else if (resource instanceof IFile) {
+	// files.add((IFile) resource);
+	// }
+	// }
+	// }
 
-	private static void requestVerification(IPath filePath) throws IOException, CoreException, IncorrectPasswordException {
-		// TODO make this not dependent on the current workspace
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IFile file = root.getFile(filePath);
-		String filename = file.getName();
-		initializeConnection(2);
-		sendString(filename);
-		recvInt();
-		IPath logPath = filePath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
-		IFile logFile = root.getFile(logPath);
-		if (logFile.exists()) {
-			// TODO fix null
-			logFile.delete(true, null);
-		}
-		// TODO fix null
-		logFile.create(is, true, null);
-		closeConnection();
-	}
+	/// private static void requestVerification(IPath filePath) throws IOException, CoreException, IncorrectPasswordException {//// // TODO make this not dependent on the current workspace//// IWorkspace workspace = ResourcesPlugin.getWorkspace();//// IWorkspaceRoot root = workspace.getRoot();//// IFile file = root.getFile(filePath);//// String filename = file.getName();//// initializeConnection(2);//// sendString(filename);//// recvInt();////		IPath logPath = filePath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1//	// IFile logFile = root.getFile(logPath)//	// if (logFile.exists()) //	// // TODO fix null//// logFile.delete(true, null);
+	// / }
+	// / // TODO fix null
+	// // logFile.create(is, true, null);
+	// closeConnection();
+	// }
 
-	private static void sendFiles(IPath[] iPaths) throws IOException, CoreException {
-		sendInt(iPaths.length);
-		for (int i = 0; i < iPaths.length; i++) {
-			sendFile(iPaths[i]);
-		}
-	}
+	// private static void sendFiles(IPath[] iPaths) throws IOException, CoreException {
+	// sendInt(iPaths.length);
+	// for (int i = 0; i < iPaths.length; i++) {
+	// sendFile(iPaths[i]);
+	// }
+	// }
 
-	private static void sendFile(IPath iPath) throws CoreException, IOException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IFile file = root.getFile(iPath);
-		sendFile(file);
-	}
+	// private static void sendFile(IPath iPath) throws CoreException, IOException {
+	// IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	// IWorkspaceRoot root = workspace.getRoot();
+	// IFile file = root.getFile(iPath);
+	// sendFile(file);
+	// }
 
 	private static void closeConnection() throws IOException {
 		recvInt();
@@ -289,30 +304,60 @@ public class GIGUtilities {
 	 * Processes the binary created by klee
 	 */
 	private static void processBinary(IPath binaryPath) throws IOException, CoreException, InterruptedException {
-		// setup the log file path
-		IPath logPath = binaryPath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
-
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		String binaryOSPath = workspaceRoot.getFile(binaryPath).getLocation().toOSString();
+		IFile binaryFile = workspaceRoot.getFile(binaryPath);
+
 		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		boolean local = preferenceStore.getBoolean(GIGPreferencePage.LOCAL);
+		if (!local) {
+			try {
+				// First send the file over
+				List<IFile> fileList = new ArrayList<IFile>();
+				fileList.add(binaryFile);
+				sendFoldersAndFiles(new ArrayList<IFolder>(), fileList);
+
+				requestVerification(binaryFile.getProject(), binaryFile.getProjectRelativePath());
+
+				// TODO needs to be its own job on UI thread
+				UIJob job = new UIJob(Messages.RESET_SERVER_VIEW) {
+
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						ServerView.getDefault().reset();
+						return Status.OK_STATUS;
+					}
+
+				};
+				startJob(job);
+			} catch (IncorrectPasswordException ipe) {
+				// TODO open up dialog that says "Incorrect Password, change it under preferences" or something
+			}
+			return;
+		}
+
+		// setup the log file path
+		IPath logPath = binaryPath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
+		String binaryOSPath = binaryFile.getLocation().toOSString();
 		String gkleeOSPath = preferenceStore.getString(GIGPreferencePage.BIN) + "/gklee"; //$NON-NLS-1$
 		ProcessBuilder processBuilder = new ProcessBuilder(gkleeOSPath, binaryOSPath);
 		buildEnvPath(processBuilder.environment());
 
 		Process process = processBuilder.start();
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		Scanner scan = new Scanner(bufferedReader);
+		StringBuilder stringBuilder = new StringBuilder();
+		while (scan.hasNextLine()) {
+			String line = scan.nextLine();
+			stringBuilder.append(line);
+			stringBuilder.append('\n');
+		}
 		process.waitFor();
 		if (process.exitValue() != 0) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			Scanner scan = new Scanner(br);
-			while (scan.hasNextLine()) {
-				String line = scan.nextLine();
-				System.out.println(line);
-			}
 			processExitOnValue(process.exitValue());
 			return;
 		}
-		InputStream is = process.getInputStream();
+		InputStream is = new ByteArrayInputStream(stringBuilder.toString().getBytes());
 		IFile logFile = workspaceRoot.getFile(logPath);
 		if (logFile.exists()) {
 			// TODO fix null
@@ -325,12 +370,25 @@ public class GIGUtilities {
 		is.close();
 
 		// refresh eclipse environment to make it aware of the new log file
-		IProject project = workspaceRoot.getFile(binaryPath).getProject();
-		IFolder gigFolder = project.getFolder("gig"); //$NON-NLS-1$
+		IContainer gigFolder = logFile.getParent();
+		// TODO fix null
+		gigFolder.refreshLocal(1, null);
+		// also be sure to get rid of temporary files that gklee created
+		cleanUpGklee(gigFolder);
 		// TODO fix null
 		gigFolder.refreshLocal(1, null);
 
 		processLog(logPath);
+	}
+
+	private static void cleanUpGklee(IContainer gigFolder) throws CoreException {
+		IResource[] resources = gigFolder.members();
+		for (IResource res : resources) {
+			if (res.getName().startsWith("klee-")) { //$NON-NLS-1$
+				// TODO fix null
+				res.delete(true, null);
+			}
+		}
 	}
 
 	private static void processExitOnValue(int exitValue) {
@@ -355,8 +413,7 @@ public class GIGUtilities {
 					return Status.OK_STATUS;
 				}
 			};
-			job.setPriority(UIJob.INTERACTIVE);
-			job.schedule();
+			startJob(job);
 		} catch (IllegalStateException e) {
 			StatusManager.getManager().handle(
 					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PARSE_EXCEPTION, e));
@@ -378,6 +435,11 @@ public class GIGUtilities {
 		} finally {
 			jobsLock.unlock();
 		}
+	}
+
+	public static void startJob(UIJob job) {
+		job.setPriority(Job.INTERACTIVE);
+		job.schedule();
 	}
 
 	/*
@@ -630,13 +692,23 @@ public class GIGUtilities {
 
 	public static void remoteVerifyFile(IProject project, ServerTreeItem item) throws IOException, IncorrectPasswordException,
 			CoreException {
-		initializeConnection(2);
-
 		String filePathString = item.getFullName();
-		sendString(filePathString);
-		String logString = recvString();
 		IFile file = project.getFile(filePathString);
 		IPath filePath = file.getProjectRelativePath();
+
+		requestVerification(project, filePath);
+	}
+
+	/*
+	 * The filePath needs to be relative to the project
+	 */
+	private static void requestVerification(IProject project, IPath filePath) throws IOException, IncorrectPasswordException,
+			CoreException {
+		initializeConnection(2);
+
+		sendString(filePath.toString());
+		String logString = recvString();
+
 		IPath logPath = filePath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
 		IFile logFile = project.getFile(logPath);
 		InputStream logInputStream = new ByteArrayInputStream(logString.getBytes());
@@ -646,9 +718,26 @@ public class GIGUtilities {
 		}
 		else {
 			// TODO fix null
+			IContainer parentToLog = logFile.getParent();
+			if (!parentToLog.exists()) {
+				makeFolder((IFolder) (parentToLog));
+			}
 			logFile.create(logInputStream, true, null);
 		}
 
 		closeConnection();
+
+		// TODO fix null
+		logFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		processLog(logFile.getFullPath());
+	}
+
+	private static void makeFolder(IFolder iFolder) throws CoreException {
+		IContainer parent = iFolder.getParent();
+		if (!parent.exists()) {
+			makeFolder((IFolder) parent);
+		}
+		// TODO fix null
+		iFolder.create(true, true, null);
 	}
 }

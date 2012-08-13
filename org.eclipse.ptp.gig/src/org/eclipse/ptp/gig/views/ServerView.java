@@ -26,6 +26,7 @@ import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
+import org.eclipse.ptp.gig.util.IllegalCommandException;
 import org.eclipse.ptp.gig.util.IncorrectPasswordException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -147,6 +148,9 @@ public class ServerView extends ViewPart {
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (IllegalCommandException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				} finally {
 					GIGUtilities.setJobState(JobState.None);
 				}
@@ -167,6 +171,9 @@ public class ServerView extends ViewPart {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalCommandException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -206,6 +213,9 @@ public class ServerView extends ViewPart {
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (IllegalCommandException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				finally {
 					GIGUtilities.setJobState(JobState.None);
@@ -239,6 +249,9 @@ public class ServerView extends ViewPart {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalCommandException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

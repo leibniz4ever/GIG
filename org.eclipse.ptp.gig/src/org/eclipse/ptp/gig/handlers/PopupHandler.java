@@ -24,6 +24,7 @@ import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
+import org.eclipse.ptp.gig.util.IllegalCommandException;
 import org.eclipse.ptp.gig.util.IncorrectPasswordException;
 import org.eclipse.ptp.gig.views.GIGView;
 import org.eclipse.ptp.gig.views.ServerView;
@@ -145,22 +146,22 @@ public class PopupHandler extends AbstractHandler {
 							};
 							job.setPriority(UIJob.SHORT);
 							job.schedule();
-							return Status.OK_STATUS;
 						} catch (CoreException e) {
 							StatusManager.getManager().handle(
 									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
-							return Status.CANCEL_STATUS;
 						} catch (IOException e) {
 							StatusManager.getManager().handle(
 									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
-							return Status.CANCEL_STATUS;
 						} catch (IncorrectPasswordException e) {
 							// TODO display a dialog that indicates "Incorrect Password" or something
-							return Status.CANCEL_STATUS;
+						} catch (IllegalCommandException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 						finally {
 							GIGUtilities.setJobState(JobState.None);
 						}
+						return Status.CANCEL_STATUS;
 					}
 
 				};

@@ -65,7 +65,8 @@ public class ProjectToRecv {
 		}
 	}
 
-	public void sendNamesRecvData(IProject project) throws IOException, IncorrectPasswordException, CoreException {
+	public void sendNamesRecvData(IProject project) throws IOException, IncorrectPasswordException, CoreException,
+			IllegalCommandException {
 		GIGUtilities.sendNamesRecvData(project, folders, files);
 	}
 

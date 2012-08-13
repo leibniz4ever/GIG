@@ -127,6 +127,9 @@ public class GIGUtilities {
 				startJob(job);
 			} catch (IncorrectPasswordException ipe) {
 				// TODO open up dialog that says "Incorrect Password, change it under preferences" or something
+			} catch (IllegalCommandException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return;
 		}
@@ -229,7 +232,8 @@ public class GIGUtilities {
 		socket = null;
 	}
 
-	private static void initializeConnection(int instructionType) throws IOException, IncorrectPasswordException {
+	private static void initializeConnection(int instructionType) throws IOException, IncorrectPasswordException,
+			IllegalCommandException {
 		int port = 8883;
 		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
 		socket = new Socket(preferenceStore.getString(Messages.SERVER_NAME), port); // null is local host, ip of formal
@@ -248,6 +252,12 @@ public class GIGUtilities {
 			throw new IncorrectPasswordException();
 		}
 		sendInt(instructionType);
+		if (instructionType == 0 || instructionType == 4) {
+			i = recvInt();
+			if (i != 0) {
+				throw new IllegalCommandException();
+			}
+		}
 	}
 
 	/*
@@ -298,6 +308,9 @@ public class GIGUtilities {
 				startJob(job);
 			} catch (IncorrectPasswordException ipe) {
 				// TODO open up dialog that says "Incorrect Password, change it under preferences" or something
+			} catch (IllegalCommandException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return;
 		}
@@ -505,7 +518,7 @@ public class GIGUtilities {
 	 * project
 	 */
 	public static void sendFoldersAndFiles(List<IFolder> folders, List<IFile> files) throws CoreException, IOException,
-			IncorrectPasswordException {
+			IncorrectPasswordException, IllegalCommandException {
 		initializeConnection(0);
 		ProjectToSend projectToSend = new ProjectToSend();
 		for (IFolder folder : folders) {
@@ -535,7 +548,8 @@ public class GIGUtilities {
 		is.close();
 	}
 
-	public static ServerTreeItem getServerFoldersAndFilesRoot() throws IOException, IncorrectPasswordException {
+	public static ServerTreeItem getServerFoldersAndFilesRoot() throws IOException, IncorrectPasswordException,
+			IllegalCommandException {
 		ServerTreeItem root = new ServerTreeItem("root"); //$NON-NLS-1$
 
 		initializeConnection(1);
@@ -571,7 +585,7 @@ public class GIGUtilities {
 	}
 
 	public static void importFoldersAndFiles(IProject project, Object[] objects) throws IOException, IncorrectPasswordException,
-			CoreException {
+			CoreException, IllegalCommandException {
 		ProjectToRecv projectToRecv = new ProjectToRecv();
 		for (Object o : objects) {
 			ServerTreeItem item = (ServerTreeItem) o;
@@ -581,7 +595,7 @@ public class GIGUtilities {
 	}
 
 	public static void sendNamesRecvData(IProject project, List<FolderToRecv> folders, List<String> files) throws IOException,
-			IncorrectPasswordException, CoreException {
+			IncorrectPasswordException, CoreException, IllegalCommandException {
 		initializeConnection(3);
 
 		sendInt(folders.size());
@@ -670,7 +684,7 @@ public class GIGUtilities {
 		}
 	}
 
-	public static void deleteRemoteFiles(Object[] objects) throws IOException, IncorrectPasswordException {
+	public static void deleteRemoteFiles(Object[] objects) throws IOException, IncorrectPasswordException, IllegalCommandException {
 		initializeConnection(4);
 
 		sendInt(objects.length);
@@ -683,7 +697,7 @@ public class GIGUtilities {
 	}
 
 	public static void remoteVerifyFile(IProject project, ServerTreeItem item) throws IOException, IncorrectPasswordException,
-			CoreException {
+			CoreException, IllegalCommandException {
 		String filePathString = item.getFullName();
 		IFile file = project.getFile(filePathString);
 		IPath filePath = file.getProjectRelativePath();
@@ -695,7 +709,7 @@ public class GIGUtilities {
 	 * The filePath needs to be relative to the project
 	 */
 	private static void requestVerification(IProject project, IPath filePath) throws IOException, IncorrectPasswordException,
-			CoreException {
+			CoreException, IllegalCommandException {
 		initializeConnection(2);
 
 		sendString(filePath.toString());

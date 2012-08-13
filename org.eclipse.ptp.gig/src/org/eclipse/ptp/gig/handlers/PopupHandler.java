@@ -36,9 +36,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+@SuppressWarnings("restriction")
 public class PopupHandler extends AbstractHandler {
 
-	@SuppressWarnings("restriction")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String eventName = event.getCommand().getId();

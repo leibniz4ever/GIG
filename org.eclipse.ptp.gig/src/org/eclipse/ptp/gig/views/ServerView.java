@@ -192,6 +192,7 @@ public class ServerView extends ViewPart {
 	 * To be called from anywhere to reset this. Does require the current thread to be the UI thread though.
 	 */
 	public void reset() {
+		Object[] expandedElements = treeViewer.getExpandedElements();
 		IContentProvider contentProvider = new ServerContentProvider();
 		treeViewer.setContentProvider(contentProvider);
 		IBaseLabelProvider labelProvider = new ServerLabelProvider();
@@ -199,7 +200,11 @@ public class ServerView extends ViewPart {
 		ViewerSorter sorter = new ServerTreeItemSorter();
 		treeViewer.setSorter(sorter);
 		try {
-			treeViewer.setInput(GIGUtilities.getServerFoldersAndFilesRoot());
+			ServerTreeItem treeRoot = GIGUtilities.getServerFoldersAndFilesRoot();
+			treeViewer.setInput(treeRoot);
+			for (Object o : expandedElements) {
+				treeViewer.expandToLevel(o, 1);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

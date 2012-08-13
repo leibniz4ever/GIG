@@ -6,6 +6,9 @@ public class WarpDivergence {
 	private final List<int[]> sets;
 	private final int warpNumber;
 
+	/*
+	 * each int[] in sets is required to be sorted
+	 */
 	public WarpDivergence(List<int[]> sets, int warp) {
 		this.sets = sets;
 		this.warpNumber = warp;
@@ -17,6 +20,17 @@ public class WarpDivergence {
 
 	public int getWarpNumber() {
 		return warpNumber;
+	}
+
+	/*
+	 * Call this only from the first warp
+	 */
+	public int getThreadsPerWarp() {
+		int ret = 0;
+		for (int[] ia : sets) {
+			ret = ret < ia[ia.length - 1] ? ia[ia.length - 1] : ret;
+		}
+		return ret + 1;
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -26,17 +27,25 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.log.GkleeLog;
-import org.eclipse.ptp.gig.log.LogException;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.preferences.GIGPreferencePage;
 import org.eclipse.ptp.gig.views.GIGView;
 import org.eclipse.ptp.gig.views.ServerTreeItem;
 import org.eclipse.ptp.gig.views.ServerView;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -57,6 +66,7 @@ public class GIGUtilities {
 	private static Socket socket;
 	private static OutputStream os;
 	private static InputStream is;
+	private static IProgressMonitor progressMonitor;
 
 	public static JobState getJobState() {
 		return jobState;
@@ -105,7 +115,6 @@ public class GIGUtilities {
 
 				requestVerification(origFile.getProject(), origFile.getProjectRelativePath());
 
-				// TODO needs to be its own job on UI thread
 				UIJob job = new UIJob(Messages.RESET_SERVER_VIEW) {
 
 					@Override
@@ -137,28 +146,23 @@ public class GIGUtilities {
 			IPath newPath = filePath.removeFileExtension().addFileExtension("C"); //$NON-NLS-1$
 			currFile = gigContainer.getFile(newPath);
 			if (currFile.exists()) {
-				// TODO fix null
-				currFile.delete(true, null);
+				currFile.delete(true, progressMonitor);
 			}
-			// TODO fix nulls
-			origFile.createLink(newPath, 0, null);
-			gigContainer.refreshLocal(1, null);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
+			origFile.createLink(newPath, 0, progressMonitor);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
+			gigContainer.refreshLocal(1, progressMonitor);
 		}
 		else {
 			currFile = origFile;
 		}
-		/*
-		 * copy the file over to the gig folder so that gklee can work entirely in that directory, also gklee requires *.c format
-		 * files
-		 */
-		// IFile origFile = (IFile) workspaceRoot.findMember(filePath);
-		// IResource resource = workspaceRoot.findMember(filename);
-		// if (resource != null && resource.exists()) {
-		// // TODO fix null
-		// resource.delete(true, null);
-		// }
-		// // TODO fix null's
-		// currFile.copy(filename, true, null);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 
 		// begin building the command line with absolute (not relative paths), expecially from the preferenceStore
 		String sourceOSPath, binaryOSPath;
@@ -172,85 +176,49 @@ public class GIGUtilities {
 		Map<String, String> environment = processBuilder.environment();
 		buildEnvPath(environment);
 
-		// TODO have the output go to console (GIG Console?)
 		Process process = processBuilder.start();
-		process.waitFor();
 		BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		Scanner scan = new Scanner(br);
+		MessageConsole myConsole = findConsole(GIGPlugin.PLUGIN_ID);
+		MessageConsoleStream out = myConsole.newMessageStream();
 		while (scan.hasNextLine()) {
 			String line = scan.nextLine();
-			System.out.println(line);
+			out.println(line);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 		}
+		process.waitFor();
+
 		if (process.exitValue() != 0) {
 			processExitOnValue(process.exitValue());
 			return;
 		}
 
 		// refresh environment so that eclipse is aware of the new binary
-		// TODO fix null
-		gigContainer.refreshLocal(1, null);
+		gigContainer.refreshLocal(1, progressMonitor);
 
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 		processBinary(binaryPath);
 	}
 
-	// private static void sendSelection(IPath[] iPaths) throws IOException, CoreException, IncorrectPasswordException {
-	// try {
-	// // TODO redo this to conform with new protocols
-	// initializeConnection(0);
-	// sendFolders(new IPath[0]);
-	// sendFiles(new IPath[] { iPaths[0] });
-	// closeConnection();
-	// } catch (CoreException ce) {
-	// // TODO handle it
-	// }
-	// }
-
-	// private static void sendFolders(IPath[] iPaths) throws IOException, CoreException {
-	// sendInt(iPaths.length);
-	// for (int i = 0; i < iPaths.length; i++) {
-	// sendFolder(iPaths[i]);
-	// }
-	// }
-
-	// private static void sendFolder(IPath iPath) throws CoreException, IOException {
-	// IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	// IWorkspaceRoot root = workspace.getRoot();
-	// IFolder folder = root.getFolder(iPath);
-	// String folderName = folder.getName();
-	// sendString(folderName);
-	// IResource[] children = folder.members();
-	// List<IFolder> folders = new ArrayList<IFolder>();
-	// List<IFile> files = new ArrayList<IFile>();
-	// for (IResource resource : children) {
-	// if (resource instanceof IFolder) {
-	// folders.add((IFolder) resource);
-	// }
-	// else if (resource instanceof IFile) {
-	// files.add((IFile) resource);
-	// }
-	// }
-	// }
-
-	/// private static void requestVerification(IPath filePath) throws IOException, CoreException, IncorrectPasswordException {//// // TODO make this not dependent on the current workspace//// IWorkspace workspace = ResourcesPlugin.getWorkspace();//// IWorkspaceRoot root = workspace.getRoot();//// IFile file = root.getFile(filePath);//// String filename = file.getName();//// initializeConnection(2);//// sendString(filename);//// recvInt();////		IPath logPath = filePath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1//	// IFile logFile = root.getFile(logPath)//	// if (logFile.exists()) //	// // TODO fix null//// logFile.delete(true, null);
-	// / }
-	// / // TODO fix null
-	// // logFile.create(is, true, null);
-	// closeConnection();
-	// }
-
-	// private static void sendFiles(IPath[] iPaths) throws IOException, CoreException {
-	// sendInt(iPaths.length);
-	// for (int i = 0; i < iPaths.length; i++) {
-	// sendFile(iPaths[i]);
-	// }
-	// }
-
-	// private static void sendFile(IPath iPath) throws CoreException, IOException {
-	// IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	// IWorkspaceRoot root = workspace.getRoot();
-	// IFile file = root.getFile(iPath);
-	// sendFile(file);
-	// }
+	/*
+	 * From eclipse.org
+	 */
+	private static MessageConsole findConsole(String name) {
+		ConsolePlugin plugin = ConsolePlugin.getDefault();
+		IConsoleManager conMan = plugin.getConsoleManager();
+		IConsole[] existing = conMan.getConsoles();
+		for (int i = 0; i < existing.length; i++)
+			if (name.equals(existing[i].getName()))
+				return (MessageConsole) existing[i];
+		// no console found, so create a new one
+		MessageConsole myConsole = new MessageConsole(name, null);
+		conMan.addConsoles(new IConsole[] { myConsole });
+		return myConsole;
+	}
 
 	private static void closeConnection() throws IOException {
 		recvInt();
@@ -264,14 +232,14 @@ public class GIGUtilities {
 
 	private static void initializeConnection(int instructionType) throws IOException, IncorrectPasswordException {
 		int port = 8883;
-		// TODO switch to DNS address of formal
-		socket = new Socket("127.0.0.1", port);
+		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		socket = new Socket(preferenceStore.getString(Messages.SERVER_NAME), port); // null is local host, ip of formal
+																					// 155.98.69.106
 		os = socket.getOutputStream();
 		is = socket.getInputStream();
 
 		// login
 		String username, password;
-		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
 		username = preferenceStore.getString(GIGPreferencePage.USERNAME);
 		password = preferenceStore.getString(GIGPreferencePage.PASSWORD);
 		sendString(username);
@@ -319,7 +287,6 @@ public class GIGUtilities {
 
 				requestVerification(binaryFile.getProject(), binaryFile.getProjectRelativePath());
 
-				// TODO needs to be its own job on UI thread
 				UIJob job = new UIJob(Messages.RESET_SERVER_VIEW) {
 
 					@Override
@@ -336,6 +303,9 @@ public class GIGUtilities {
 			return;
 		}
 
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 		// setup the log file path
 		IPath logPath = binaryPath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
 		String binaryOSPath = binaryFile.getLocation().toOSString();
@@ -351,6 +321,9 @@ public class GIGUtilities {
 			String line = scan.nextLine();
 			stringBuilder.append(line);
 			stringBuilder.append('\n');
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 		}
 		process.waitFor();
 		if (process.exitValue() != 0) {
@@ -360,23 +333,31 @@ public class GIGUtilities {
 		InputStream is = new ByteArrayInputStream(stringBuilder.toString().getBytes());
 		IFile logFile = workspaceRoot.getFile(logPath);
 		if (logFile.exists()) {
-			// TODO fix null
-			logFile.setContents(is, true, false, null);
+			logFile.setContents(is, true, false, progressMonitor);
 		}
 		else {
-			// TODO fix null
-			logFile.create(is, true, null);
+			logFile.create(is, true, progressMonitor);
 		}
 		is.close();
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 
 		// refresh eclipse environment to make it aware of the new log file
 		IContainer gigFolder = logFile.getParent();
-		// TODO fix null
-		gigFolder.refreshLocal(1, null);
+		gigFolder.refreshLocal(1, progressMonitor);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 		// also be sure to get rid of temporary files that gklee created
 		cleanUpGklee(gigFolder);
-		// TODO fix null
-		gigFolder.refreshLocal(1, null);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
+		gigFolder.refreshLocal(1, progressMonitor);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 
 		processLog(logPath);
 	}
@@ -385,8 +366,7 @@ public class GIGUtilities {
 		IResource[] resources = gigFolder.members();
 		for (IResource res : resources) {
 			if (res.getName().startsWith("klee-")) { //$NON-NLS-1$
-				// TODO fix null
-				res.delete(true, null);
+				res.delete(true, progressMonitor);
 			}
 		}
 	}
@@ -396,6 +376,13 @@ public class GIGUtilities {
 		// print some sort of error to console/dialog
 	}
 
+	public static void jumpToLine(IFile file, int line) throws CoreException {
+		IMarker marker = file.createMarker(IMarker.MARKER);
+		marker.setAttribute(IMarker.LINE_NUMBER, line);
+		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file, true);
+		IDE.gotoMarker(editor, marker);
+	}
+
 	/*
 	 * Processes a log file generated by gklee
 	 */
@@ -403,13 +390,15 @@ public class GIGUtilities {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
 		IFile logFile = workspaceRoot.getFile(logPath);
+		final IProject project = logFile.getProject();
 		InputStream logInputStream = logFile.getContents();
 		try {
-			final GkleeLog gkleeLog = new GkleeLog(logInputStream);
+			final GkleeLog gkleeLog = new GkleeLog(logInputStream, logFile);
+			logInputStream.close();
 			UIJob job = new UIJob(Messages.UPDATE_GIG) {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					GIGView.getDefault().update(gkleeLog);
+					GIGView.getDefault().update(gkleeLog, project);
 					return Status.OK_STATUS;
 				}
 			};
@@ -417,9 +406,6 @@ public class GIGUtilities {
 		} catch (IllegalStateException e) {
 			StatusManager.getManager().handle(
 					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PARSE_EXCEPTION, e));
-		} catch (LogException e) {
-			StatusManager.getManager().handle(
-					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.LOG_EXCEPTION_THREAD_BANK_CONFLICT));
 		}
 	}
 
@@ -429,6 +415,8 @@ public class GIGUtilities {
 			if (jobState == JobState.None) {
 				GIGUtilities.job = job;
 				job.setPriority(Job.LONG);
+				progressMonitor = new NullProgressMonitor();
+				progressMonitor.setCanceled(false);
 				job.schedule();
 				jobState = JobState.Running;
 			}
@@ -438,6 +426,7 @@ public class GIGUtilities {
 	}
 
 	public static void startJob(UIJob job) {
+		// TODO need a way to keep track of these and to cancel them
 		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
 	}
@@ -448,6 +437,7 @@ public class GIGUtilities {
 	public static void stopJob() {
 		jobsLock.lock();
 		if (jobState == JobState.Running) {
+			progressMonitor.setCanceled(true);
 			jobState = JobState.Canceled;
 			jobsLock.unlock();
 			int i = 1000;
@@ -617,20 +607,23 @@ public class GIGUtilities {
 			}
 			InputStream inputStream = new ByteArrayInputStream(buffer);
 			if (file.exists()) {
-				// TODO fix null
-				file.setContents(inputStream, true, true, null);
+				file.setContents(inputStream, true, true, progressMonitor);
+				if (progressMonitor.isCanceled()) {
+					return;
+				}
 				inputStream.close();
 			}
 			else {
-				// TODO fix null
-				file.create(inputStream, true, null);
+				file.create(inputStream, true, progressMonitor);
+				if (progressMonitor.isCanceled()) {
+					return;
+				}
 				inputStream.close();
 			}
 		}
 
 		closeConnection();
-		// TODO fix null
-		project.refreshLocal(IProject.DEPTH_INFINITE, null);
+		project.refreshLocal(IProject.DEPTH_INFINITE, progressMonitor);
 	}
 
 	public static void sendNamesRecvData(IContainer container, String name, List<FolderToRecv> folders, List<String> files)
@@ -644,8 +637,10 @@ public class GIGUtilities {
 			folder = ((IProject) container).getFolder(name);
 		}
 		if (!folder.exists()) {
-			// TODO fix null
-			folder.create(true, true, null);
+			folder.create(true, true, progressMonitor);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 		}
 		int numFolders = folders.size();
 		sendInt(numFolders);
@@ -666,13 +661,17 @@ public class GIGUtilities {
 			}
 			InputStream inputStream = new ByteArrayInputStream(buffer);
 			if (file.exists()) {
-				// TODO fix null
-				file.setContents(inputStream, true, true, null);
+				file.setContents(inputStream, true, true, progressMonitor);
+				if (progressMonitor.isCanceled()) {
+					return;
+				}
 				inputStream.close();
 			}
 			else {
-				// TODO fix null
-				file.create(inputStream, true, null);
+				file.create(inputStream, true, progressMonitor);
+				if (progressMonitor.isCanceled()) {
+					return;
+				}
 				inputStream.close();
 			}
 		}
@@ -713,22 +712,28 @@ public class GIGUtilities {
 		IFile logFile = project.getFile(logPath);
 		InputStream logInputStream = new ByteArrayInputStream(logString.getBytes());
 		if (logFile.exists()) {
-			// TODO fix null
-			logFile.setContents(logInputStream, true, false, null);
+			logFile.setContents(logInputStream, true, false, progressMonitor);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 		}
 		else {
-			// TODO fix null
 			IContainer parentToLog = logFile.getParent();
 			if (!parentToLog.exists()) {
 				makeFolder((IFolder) (parentToLog));
 			}
-			logFile.create(logInputStream, true, null);
+			logFile.create(logInputStream, true, progressMonitor);
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 		}
 
 		closeConnection();
 
-		// TODO fix null
-		logFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		logFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, progressMonitor);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
 		processLog(logFile.getFullPath());
 	}
 
@@ -737,7 +742,15 @@ public class GIGUtilities {
 		if (!parent.exists()) {
 			makeFolder((IFolder) parent);
 		}
-		// TODO fix null
-		iFolder.create(true, true, null);
+		iFolder.create(true, true, progressMonitor);
+		if (progressMonitor.isCanceled()) {
+			return;
+		}
+	}
+
+	public static void doCancel() {
+		if (progressMonitor != null) {
+			progressMonitor.setCanceled(true);
+		}
 	}
 }

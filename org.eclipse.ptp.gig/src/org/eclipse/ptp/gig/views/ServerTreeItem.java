@@ -51,11 +51,40 @@ public class ServerTreeItem {
 	 * returns the relative path of this
 	 */
 	public String getFullName() {
-		if (parent.name.equals("root")) { //$NON-NLS-1$
-			return name; //$NON-NLS-1$
+		if (parent.parent == null) {
+			return name;
 		}
 		// we want the linux file separator, since this is the one that the server will use
 		return parent.getFullName() + '/' + name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ServerTreeItem) {
+			ServerTreeItem item = (ServerTreeItem) o;
+			if (this.parent == null) {
+				if (item.parent == null) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				if (item.parent == null) {
+					return false;
+				}
+				else {
+					return this.name.equals(item.name) && this.parent.equals(item.parent);
+				}
+			}
+		}
+		return false;
 	}
 
 }

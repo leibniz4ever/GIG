@@ -17,7 +17,6 @@ public class Messages extends NLS {
 	public static String RUN_GKLEE;
 	public static String PART_INIT_EXCEPTION;
 	public static String PARSE_EXCEPTION;
-	public static String LOG_EXCEPTION_THREAD_BANK_CONFLICT;
 	public static String MEMORY_COALESCING;
 	public static String BANK_CONFLICTS;
 	public static String WARP_DIVERGENCE;
@@ -44,6 +43,35 @@ public class Messages extends NLS {
 	public static String REFRESH;
 	public static String DELETE_REMOTE_FILE;
 	public static String RESET_SERVER_VIEW;
+	public static String SERVER_NAME;
+	public static String LOG_EXCEPTION;
+	public static String BLOCK;
+	public static String THREAD_INFO_FORMAT;
+	public static String NONCOALESCED_GLOBAL_MEMORY_ACCESSES;
+	public static String NO;
+	public static String NONCOALESCED_GLOBAL_MEMORY_ACCESS;
+	public static String POTENTIAL_DEADLOCK_SAME_LENGTH;
+	public static String POTENTIAL_DEADLOCK_VARIED_LENGTH;
+	public static String RACES;
+	public static String OTHER;
+	public static String WWRWB;
+	public static String WWRW;
+	public static String WWRAWB;
+	public static String WWRAW;
+	public static String RWRAW;
+	public static String WWBDB;
+	public static String WWBD;
+	public static String RWBD;
+	public static String RW;
+	public static String WW;
+	public static String ASSERTION_VIOLATION;
+	public static String MISSING_VOLATILE;
+	public static String WARP_NUMBER;
+	public static String THREAD_NUMBER;
+	public static String STATISTICS;
+	public static String WARP_STATISTIC;
+	public static String BLOCK_STATISTIC;
+	public static String CANCEL;
 
 	static {
 		// initialize resource bundle

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ptp.gig.GIGPlugin;
+import org.eclipse.ptp.gig.messages.Messages;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -31,6 +32,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		pstore.setDefault(GIGPreferencePage.LOCAL, false);
 		pstore.setDefault(GIGPreferencePage.USERNAME, "gklee"); //$NON-NLS-1$
 		pstore.setDefault(GIGPreferencePage.PASSWORD, ""); //$NON-NLS-1$
+		pstore.setDefault(Messages.SERVER_NAME, "formal.cs.utah.edu"); //$NON-NLS-1$
 		pstore.setDefault(GIGPreferencePage.GKLEE_HOME, gkleeHome);
 		pstore.setDefault(GIGPreferencePage.FLA_KLEE_HOME_DIR, flaKleeHomeDir);
 		pstore.setDefault(GIGPreferencePage.GKLEE_DEBUG_PLUS_ASSERTS_BIN, gkleeDebugPlusAssertsBin);

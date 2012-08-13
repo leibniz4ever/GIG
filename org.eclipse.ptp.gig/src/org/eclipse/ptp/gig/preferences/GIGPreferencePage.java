@@ -32,6 +32,7 @@ public class GIGPreferencePage extends FieldEditorPreferencePage implements IWor
 	@Override
 	protected void createFieldEditors() {
 		Composite composite = this.getFieldEditorParent();
+
 		Group localRemoteGroup = new Group(composite, SWT.NULL);
 		Group remoteGroup = new Group(localRemoteGroup, SWT.NULL);
 		Group localGroup = new Group(localRemoteGroup, SWT.NULL);
@@ -39,6 +40,7 @@ public class GIGPreferencePage extends FieldEditorPreferencePage implements IWor
 				BooleanFieldEditor.DEFAULT, localRemoteGroup));
 		this.addField(new StringFieldEditor(GIGPreferencePage.USERNAME, GIGPreferencePage.USERNAME, remoteGroup));
 		this.addField(new StringFieldEditor(GIGPreferencePage.PASSWORD, GIGPreferencePage.PASSWORD, remoteGroup));
+		this.addField(new StringFieldEditor(Messages.SERVER_NAME, Messages.SERVER_NAME, remoteGroup));
 		this.addField(new StringFieldEditor(GKLEE_HOME, GKLEE_HOME, localGroup));
 		this.addField(new StringFieldEditor(FLA_KLEE_HOME_DIR, FLA_KLEE_HOME_DIR, localGroup));
 		this.addField(new StringFieldEditor(GKLEE_DEBUG_PLUS_ASSERTS_BIN, GKLEE_DEBUG_PLUS_ASSERTS_BIN, localGroup));

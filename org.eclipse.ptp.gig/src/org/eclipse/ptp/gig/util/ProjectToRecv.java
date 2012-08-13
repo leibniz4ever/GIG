@@ -20,7 +20,7 @@ public class ProjectToRecv {
 	 */
 	public FolderToRecv add(ServerTreeItem item, boolean addAll) {
 		ServerTreeItem parentItem = item.getParent();
-		if (parentItem.getName().equals("root")) { //$NON-NLS-1$
+		if (parentItem.getParent() == null) {
 			if (item.isFolder()) {
 				FolderToRecv targetFolder = null;
 				for (FolderToRecv folder : folders) {
@@ -30,11 +30,17 @@ public class ProjectToRecv {
 					}
 				}
 				if (targetFolder != null) {
+					if (addAll) {
+						targetFolder.addAll(item.getChildren());
+					}
 					return targetFolder;
 				}
 				else {
 					targetFolder = new FolderToRecv(item.getName());
 					folders.add(targetFolder);
+					if (addAll) {
+						targetFolder.addAll(item.getChildren());
+					}
 					return targetFolder;
 				}
 			}

@@ -191,7 +191,6 @@ public class GIGUtilities {
 		process.waitFor();
 
 		if (process.exitValue() != 0) {
-			processExitOnValue(process.exitValue());
 			return;
 		}
 
@@ -327,7 +326,6 @@ public class GIGUtilities {
 		}
 		process.waitFor();
 		if (process.exitValue() != 0) {
-			processExitOnValue(process.exitValue());
 			return;
 		}
 		InputStream is = new ByteArrayInputStream(stringBuilder.toString().getBytes());
@@ -369,11 +367,6 @@ public class GIGUtilities {
 				res.delete(true, progressMonitor);
 			}
 		}
-	}
-
-	private static void processExitOnValue(int exitValue) {
-		// TODO Auto-generated method stub
-		// print some sort of error to console/dialog
 	}
 
 	public static void jumpToLine(IFile file, int line) throws CoreException {

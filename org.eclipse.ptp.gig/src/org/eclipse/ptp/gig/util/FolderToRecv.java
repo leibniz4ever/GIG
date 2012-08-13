@@ -77,4 +77,8 @@ public class FolderToRecv {
 		return folder;
 	}
 
+	@Override
+	public String toString() {
+		return this.name;
+	}
 }

@@ -7,6 +7,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -21,6 +25,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.util.GIGUtilities;
+import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.util.IncorrectPasswordException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -115,30 +120,41 @@ public class ServerView extends ViewPart {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProjects()[0];
-		// TODO put this in a different job so that UI thread is free
-		try {
-			verifySelection(project);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncorrectPasswordException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		verifySelection(project);
 	}
 
-	protected void verifySelection(IProject project) throws IOException, IncorrectPasswordException, CoreException {
+	protected void verifySelection(final IProject project) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object[] objects = selection.toArray();
 		if (objects.length != 1 || ((ServerTreeItem) objects[0]).isFolder()) {
 			// TODO send message that they should have exactly one file selected
 			return;
 		}
-		ServerTreeItem item = (ServerTreeItem) objects[0];
-		GIGUtilities.remoteVerifyFile(project, item);
+		final ServerTreeItem item = (ServerTreeItem) objects[0];
+		Job job = new Job(Messages.RUN_GKLEE) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					GIGUtilities.remoteVerifyFile(project, item);
+					return Status.OK_STATUS;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IncorrectPasswordException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					GIGUtilities.setJobState(JobState.None);
+				}
+				return Status.CANCEL_STATUS;
+			}
+
+		};
+		GIGUtilities.startJob(job);
 	}
 
 	protected void deleteRemoteFiles() {
@@ -171,21 +187,35 @@ public class ServerView extends ViewPart {
 		manager.add(this.resetAction);
 	}
 
-	private void doImport(IProject project) {
+	private void doImport(final IProject project) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-		Object[] objects = selection.toArray();
-		try {
-			GIGUtilities.importFoldersAndFiles(project, objects);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncorrectPasswordException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final Object[] objects = selection.toArray();
+		Job job = new Job(Messages.IMPORT) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					GIGUtilities.importFoldersAndFiles(project, objects);
+					return Status.OK_STATUS;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IncorrectPasswordException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				finally {
+					GIGUtilities.setJobState(JobState.None);
+				}
+				return Status.CANCEL_STATUS;
+			}
+
+		};
+		GIGUtilities.startJob(job);
+
 	}
 
 	/*

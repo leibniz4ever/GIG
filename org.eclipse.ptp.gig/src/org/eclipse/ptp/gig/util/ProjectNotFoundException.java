@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ptp.gig.util;
 
-public class IncorrectPasswordException extends Exception {
+public class ProjectNotFoundException extends Exception {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6391767406115836206L;
+	private static final long serialVersionUID = 8617994370246627321L;
+
+	public ProjectNotFoundException(String projectName) {
+		super(projectName);
+	}
 
 }

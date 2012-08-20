@@ -1,11 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.views;
 
 import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,15 +35,32 @@ import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.util.IllegalCommandException;
 import org.eclipse.ptp.gig.util.IncorrectPasswordException;
+import org.eclipse.ptp.gig.util.ProjectNotFoundException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+/*
+ * This view is for interactions with the server.
+ */
 public class ServerView extends ViewPart {
+
+	public static final String ID = "org.eclipse.ptp.gig.views.ServerView"; //$NON-NLS-1$
+
+	public static ServerView getDefault() {
+		return serverView;
+	}
 
 	private TreeViewer treeViewer;
 	private IAction importAction, resetAction, deleteAction, verifyAction;
+
 	private static ServerView serverView;
 
 	public ServerView() {
@@ -51,7 +75,11 @@ public class ServerView extends ViewPart {
 		importAction = new Action() {
 			@Override
 			public void run() {
-				startImport();
+				try {
+					startImport();
+				} catch (final ProjectNotFoundException e) {
+					GIGUtilities.showErrorDialog(Messages.PROJECT_NOT_FOUND, Messages.PROJECT_NOT_FOUND_MESSAGE);
+				}
 			}
 		};
 		importAction.setText(Messages.IMPORT);
@@ -81,14 +109,18 @@ public class ServerView extends ViewPart {
 		verifyAction = new Action() {
 			@Override
 			public void run() {
-				prepareVerifySelection();
+				try {
+					prepareVerifySelection();
+				} catch (final ProjectNotFoundException e) {
+					GIGUtilities.showErrorDialog(Messages.PROJECT_NOT_FOUND, Messages.PROJECT_NOT_FOUND_MESSAGE);
+				}
 			}
 		};
 		verifyAction.setText(Messages.RUN_GKLEE);
 		verifyAction.setToolTipText(Messages.RUN_GKLEE);
 		verifyAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/trident.png")); //$NON-NLS-1$
 
-		MenuManager menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		final MenuManager menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuManager.setRemoveAllWhenShown(true);
 		menuManager.addMenuListener(new IMenuListener() {
 
@@ -98,12 +130,12 @@ public class ServerView extends ViewPart {
 			}
 
 		});
-		Menu menu = menuManager.createContextMenu(this.treeViewer.getControl());
+		final Menu menu = menuManager.createContextMenu(this.treeViewer.getControl());
 		this.treeViewer.getControl().setMenu(menu);
 		this.getSite().registerContextMenu(menuManager, this.treeViewer);
 
-		IActionBars actionBars = this.getViewSite().getActionBars();
-		IToolBarManager toolBarManager = actionBars.getToolBarManager();
+		final IActionBars actionBars = this.getViewSite().getActionBars();
+		final IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		menuManager.add(this.verifyAction);
 		toolBarManager.add(this.verifyAction);
 		menuManager.add(this.importAction);
@@ -116,106 +148,50 @@ public class ServerView extends ViewPart {
 		reset();
 	}
 
-	protected void prepareVerifySelection() {
-		// TODO let them select which project
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject project = root.getProjects()[0];
-		verifySelection(project);
-	}
-
-	protected void verifySelection(final IProject project) {
-		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-		Object[] objects = selection.toArray();
-		if (objects.length != 1 || ((ServerTreeItem) objects[0]).isFolder()) {
-			// TODO send message that they should have exactly one file selected
-			return;
-		}
-		final ServerTreeItem item = (ServerTreeItem) objects[0];
-		Job job = new Job(Messages.RUN_GKLEE) {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					GIGUtilities.remoteVerifyFile(project, item);
-					return Status.OK_STATUS;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IncorrectPasswordException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalCommandException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					GIGUtilities.setJobState(JobState.None);
-				}
-				return Status.CANCEL_STATUS;
-			}
-
-		};
-		GIGUtilities.startJob(job);
-	}
-
+	/*
+	 * Entry point for deleting remote files.
+	 */
 	protected void deleteRemoteFiles() {
-		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-		Object[] objects = selection.toArray();
+		final IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		final Object[] objects = selection.toArray();
 		try {
 			GIGUtilities.deleteRemoteFiles(objects);
 			this.reset();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncorrectPasswordException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalCommandException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final IOException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+		} catch (final IncorrectPasswordException e) {
+			GIGUtilities.showErrorDialog(Messages.INCORRECT_PASSWORD, Messages.INCORRECT_PASSWORD_MESSAGE);
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INCORRECT_PASSWORD, e));
+		} catch (final IllegalCommandException e) {
+			GIGUtilities.showErrorDialog(Messages.ILLEGAL_COMMAND, Messages.ILLEGAL_COMMAND_MESSAGE);
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.ILLEGAL_COMMAND, e));
 		}
 	}
 
-	public void startImport() {
-		// TODO Make this start a dialog for selecting the project
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject project = root.getProjects()[0];
-		doImport(project);
-	}
-
-	protected void populateManager(IMenuManager manager) {
-		manager.add(this.verifyAction);
-		manager.add(this.importAction);
-		manager.add(this.deleteAction);
-		manager.add(this.resetAction);
-	}
-
+	/*
+	 * close to entry point for importing
+	 */
 	private void doImport(final IProject project) {
-		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		final IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		final Object[] objects = selection.toArray();
-		Job job = new Job(Messages.IMPORT) {
+		final Job job = new Job(Messages.IMPORT) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					GIGUtilities.importFoldersAndFiles(project, objects);
 					return Status.OK_STATUS;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IncorrectPasswordException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalCommandException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (final IOException e) {
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+				} catch (final IncorrectPasswordException e) {
+					GIGUtilities.showErrorDialog(Messages.INCORRECT_PASSWORD, Messages.INCORRECT_PASSWORD_MESSAGE);
+					StatusManager.getManager().handle(
+							new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INCORRECT_PASSWORD, e));
+				} catch (final IllegalCommandException e) {
+					GIGUtilities.showErrorDialog(Messages.ILLEGAL_COMMAND, Messages.ILLEGAL_COMMAND_MESSAGE);
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.ILLEGAL_COMMAND, e));
+				} catch (final CoreException e) {
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
 				}
 				finally {
 					GIGUtilities.setJobState(JobState.None);
@@ -229,31 +205,48 @@ public class ServerView extends ViewPart {
 	}
 
 	/*
-	 * To be called from anywhere to reset this. Does require the current thread to be the UI thread though.
+	 * Populates the pop-up menu manager with these commands.
+	 */
+	protected void populateManager(IMenuManager manager) {
+		manager.add(this.verifyAction);
+		manager.add(this.importAction);
+		manager.add(this.deleteAction);
+		manager.add(this.resetAction);
+	}
+
+	/*
+	 * Entry point for verification
+	 */
+	protected void prepareVerifySelection() throws ProjectNotFoundException {
+		final IProject project = GIGUtilities.getTargetProject();
+		verifySelection(project);
+	}
+
+	/*
+	 * To be called from anywhere to reset this view. Does require the current thread to be the UI thread though.
 	 */
 	public void reset() {
-		Object[] expandedElements = treeViewer.getExpandedElements();
-		IContentProvider contentProvider = new ServerContentProvider();
+		final Object[] expandedElements = treeViewer.getExpandedElements();
+		final IContentProvider contentProvider = new ServerContentProvider();
 		treeViewer.setContentProvider(contentProvider);
-		IBaseLabelProvider labelProvider = new ServerLabelProvider();
+		final IBaseLabelProvider labelProvider = new ServerLabelProvider();
 		treeViewer.setLabelProvider(labelProvider);
-		ViewerSorter sorter = new ServerTreeItemSorter();
+		final ViewerSorter sorter = new ServerTreeItemSorter();
 		treeViewer.setSorter(sorter);
 		try {
-			ServerTreeItem treeRoot = GIGUtilities.getServerFoldersAndFilesRoot();
+			final ServerTreeItem treeRoot = GIGUtilities.getServerFoldersAndFilesRoot();
 			treeViewer.setInput(treeRoot);
-			for (Object o : expandedElements) {
+			for (final Object o : expandedElements) {
 				treeViewer.expandToLevel(o, 1);
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncorrectPasswordException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalCommandException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final IOException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+		} catch (final IncorrectPasswordException e) {
+			GIGUtilities.showErrorDialog(Messages.INCORRECT_PASSWORD, Messages.INCORRECT_PASSWORD_MESSAGE);
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INCORRECT_PASSWORD, e));
+		} catch (final IllegalCommandException e) {
+			GIGUtilities.showErrorDialog(Messages.ILLEGAL_COMMAND, Messages.ILLEGAL_COMMAND_MESSAGE);
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.ILLEGAL_COMMAND, e));
 		}
 	}
 
@@ -261,7 +254,61 @@ public class ServerView extends ViewPart {
 	public void setFocus() {
 	}
 
-	public static ServerView getDefault() {
-		return serverView;
+	/*
+	 * Entry point for import
+	 */
+	public void startImport() throws ProjectNotFoundException {
+		final IProject project = GIGUtilities.getTargetProject();
+		doImport(project);
+	}
+
+	/*
+	 * Close to entry point for verification.
+	 */
+	protected void verifySelection(final IProject project) {
+		final IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		final Object[] objects = selection.toArray();
+		if (objects.length != 1 || ((ServerTreeItem) objects[0]).isFolder()) {
+			GIGUtilities.showErrorDialog(Messages.SELECTION_ERROR, Messages.SELECT_ONE_FILE);
+			return;
+		}
+		final ServerTreeItem item = (ServerTreeItem) objects[0];
+
+		// we need to ensure the GIGView has been lazily loaded, it is also good to bring it to the front
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		final IWorkbenchPage page = window.getActivePage();
+		try {
+			page.showView(GIGView.ID);
+		} catch (final PartInitException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
+		}
+		final Job job = new Job(Messages.RUN_GKLEE) {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					GIGUtilities.remoteVerifyFile(project, item);
+					return Status.OK_STATUS;
+				} catch (final IOException e) {
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+				} catch (final IncorrectPasswordException e) {
+					GIGUtilities.showErrorDialog(Messages.INCORRECT_PASSWORD, Messages.INCORRECT_PASSWORD_MESSAGE);
+					StatusManager.getManager().handle(
+							new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INCORRECT_PASSWORD, e));
+				} catch (final IllegalCommandException e) {
+					GIGUtilities.showErrorDialog(Messages.ILLEGAL_COMMAND, Messages.ILLEGAL_COMMAND_MESSAGE);
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.ILLEGAL_COMMAND, e));
+				} catch (final CoreException e) {
+					StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
+				} finally {
+					GIGUtilities.setJobState(JobState.None);
+				}
+				return Status.CANCEL_STATUS;
+			}
+
+		};
+		GIGUtilities.startJob(job);
 	}
 }

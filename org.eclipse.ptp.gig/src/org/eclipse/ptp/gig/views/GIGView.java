@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.log.GkleeLog;
 import org.eclipse.ptp.gig.log.OrganizedThreadInfo;
@@ -31,14 +32,23 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 
+/*
+ * This view displays the contents of a log file more intuitively and interactively.
+ */
 public class GIGView extends ViewPart {
 
 	public static final String ID = "org.eclipse.ptp.gig.views.GIGView"; //$NON-NLS-1$
 	private static GIGView view;
-	private Tree memoryCoalescingTree, bankConflictTree, warpDivergenceTree, deadlockTree, raceTree, otherTree;
-	private CTabItem memoryCoalescingTab, bankConflictTab, warpDivergenceTab, deadlockTab, raceTab, otherTab;
 
+	public static GIGView getDefault() {
+		return view;
+	}
+
+	private Tree memoryCoalescingTree, bankConflictTree, warpDivergenceTree, deadlockTree, raceTree, otherTree;
+
+	private CTabItem memoryCoalescingTab, bankConflictTab, warpDivergenceTab, deadlockTab, raceTab, otherTab;
 	private CTabFolder cTabFolder;
+
 	private IAction cancelAction;
 
 	public GIGView() {
@@ -48,7 +58,7 @@ public class GIGView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		GridLayout parentLayout = new GridLayout();
+		final GridLayout parentLayout = new GridLayout();
 		parentLayout.marginHeight = 10;
 		parentLayout.marginWidth = 10;
 		parentLayout.numColumns = 1;
@@ -69,10 +79,13 @@ public class GIGView extends ViewPart {
 		reset();
 	}
 
+	/*
+	 * This is the way to refresh this view's tab items.
+	 */
 	private void reset() {
-		CTabItem[] cTabItems = cTabFolder.getItems();
-		for (int i = 0; i < cTabItems.length; i++) {
-			cTabItems[i].dispose();
+		final CTabItem[] cTabItems = cTabFolder.getItems();
+		for (final CTabItem cTabItem : cTabItems) {
+			cTabItem.dispose();
 		}
 
 		CTabItem cTabItem;
@@ -117,12 +130,6 @@ public class GIGView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static GIGView getDefault() {
-		return view;
 	}
 
 	/*
@@ -139,102 +146,18 @@ public class GIGView extends ViewPart {
 		updateRaces(gkleeLog, project);
 	}
 
-	private void updateRaces(GkleeLog gkleeLog, IProject project) {
-		this.raceTree.clearAll(true);
-		Image image;
-		OrganizedThreadInfo wwrwb, wwrw, wwrawb, wwraw, rwraw, wwbdb, wwbd, rwbd, rw, ww;
-		wwrwb = gkleeLog.getWwrwb();
-		wwrw = gkleeLog.getWwrw();
-		wwrawb = gkleeLog.getWwrawb();
-		wwraw = gkleeLog.getWwraw();
-		rwraw = gkleeLog.getRwraw();
-		wwbdb = gkleeLog.getWwbdb();
-		wwbd = gkleeLog.getWwbd();
-		rwbd = gkleeLog.getRwbd();
-		rw = gkleeLog.getRw();
-		ww = gkleeLog.getWw();
-		boolean races = !(wwrwb.isEmpty() && wwrw.isEmpty() && wwrawb.isEmpty() && wwraw.isEmpty() && rwraw.isEmpty()
-				&& wwbdb.isEmpty() && wwbd.isEmpty() && rwbd.isEmpty() && rw.isEmpty() && ww.isEmpty());
-		if (races) {
-			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
-			wwrwb.setupTree(this.raceTree, Messages.WWRWB, null, Messages.WWRWB, project);
-			wwrw.setupTree(this.raceTree, Messages.WWRW, null, Messages.WWRW, project);
-			wwrawb.setupTree(this.raceTree, Messages.WWRAWB, null, Messages.WWRAWB, project);
-			wwraw.setupTree(this.raceTree, Messages.WWRAW, null, Messages.WWRAW, project);
-			rwraw.setupTree(this.raceTree, Messages.RWRAW, null, Messages.RWRAW, project);
-			wwbdb.setupTree(this.raceTree, Messages.WWBDB, null, Messages.WWBDB, project);
-			wwbd.setupTree(this.raceTree, Messages.WWBD, null, Messages.WWBD, project);
-			rwbd.setupTree(this.raceTree, Messages.RWBD, null, Messages.RWBD, project);
-			rw.setupTree(this.raceTree, Messages.RW, null, Messages.RW, project);
-			ww.setupTree(this.raceTree, Messages.WW, null, Messages.WW, project);
-		}
-		else {
-			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
-			TreeItem item = new TreeItem(raceTree, SWT.NONE);
-			item.setText(Messages.NO + Messages.RACES);
-		}
-		this.raceTab.setImage(image);
-	}
-
-	private void updateOther(GkleeLog gkleeLog, IProject project) {
-		this.otherTree.clearAll(true);
-		Image image;
-		OrganizedThreadInfo missingVolatile, assertion;
-		missingVolatile = gkleeLog.getMissingVolatile();
-		assertion = gkleeLog.getAssertions();
-		boolean other = !(missingVolatile.isEmpty() && assertion.isEmpty());
-		if (other) {
-			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
-		}
-		else {
-			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
-		}
-		this.otherTab.setImage(image);
-
-		assertion.setupTree(this.otherTree, Messages.ASSERTION_VIOLATION, Messages.NO + Messages.ASSERTION_VIOLATION,
-				Messages.ASSERTION_VIOLATION, project);
-		missingVolatile.setupTree(this.otherTree, Messages.MISSING_VOLATILE, Messages.NO + Messages.MISSING_VOLATILE,
-				Messages.MISSING_VOLATILE, project);
-	}
-
-	private void updateMemoryCoalescing(GkleeLog gkleeLog, IProject project) {
-		this.memoryCoalescingTree.clearAll(true);
-		Image image;
-		// TODO change constant to preference
-		int rate = gkleeLog.getMemoryCoalescingRate();
-		if (rate < 10) {
-			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
-		}
-		else if (rate < 50) {
-			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
-		}
-		else {
-			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
-		}
-		this.memoryCoalescingTab.setImage(image);
-		gkleeLog.getMemoryCoalescingStats().setupTree(this.memoryCoalescingTree, gkleeLog.getMemoryCoalescingLocation());
-		gkleeLog.getMemoryCoalescing().setupTree(this.memoryCoalescingTree, Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESSES,
-				Messages.NO + Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESSES, Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESS, project);
-
-		// TreeItem treeItem, subTreeItem;
-		// treeItem = new TreeItem(this.memoryCoalescingTree, SWT.NONE);
-		// treeItem.setText(Messages.MEMORY_COALESCING_BY_WHOLE_WARP);
-		// for (int i = 0; i < gkleeLog.memoryCoalescingByWholeWarpList.size(); i++) {
-		// MemoryCoalescingByWholeWarp memoryCoalescingByWholeWarp = gkleeLog.memoryCoalescingByWholeWarpList.get(i);
-		// subTreeItem = new TreeItem(treeItem, SWT.NONE);
-		// subTreeItem.setText(memoryCoalescingByWholeWarp.toString());
-		// }
-	}
-
+	/*
+	 * Updates the Bank Conflicts Tab
+	 */
 	private void updateBankConflicts(GkleeLog gkleeLog, IProject project) {
 		this.bankConflictTree.clearAll(true);
 		Image image;
-		int rate = gkleeLog.getBankConflictRate();
-		// TODO change constant to preference
-		if (rate > 50) {
+		final int rate = gkleeLog.getBankConflictRate();
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		if (rate > preferenceStore.getDefaultInt(Messages.BANK_CONFLICT_HIGH)) {
 			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
 		}
-		else if (rate > 0) {
+		else if (rate > preferenceStore.getDefaultInt(Messages.BANK_CONFLICT_LOW)) {
 			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
 		}
 		else {
@@ -248,77 +171,11 @@ public class GIGView extends ViewPart {
 				Messages.NO + Messages.READ_WRITE_BANK_CONFLICT, Messages.READ_WRITE_BANK_CONFLICT, project);
 		gkleeLog.getWwbc().setupTree(this.bankConflictTree, Messages.WRITE_WRITE_BANK_CONFLICT,
 				Messages.NO + Messages.WRITE_WRITE_BANK_CONFLICT, Messages.WRITE_WRITE_BANK_CONFLICT, project);
-		// TreeItem treeItem, subTreeItem, subSubTreeItem;
-		// treeItem = new TreeItem(this.bankConflictTree, SWT.NONE);
-		// treeItem.setText(Messages.BANK_CONFLICTS_WITHIN_A_WARP);
-		// for (int i = 0; i < gkleeLog.threadBankConflicts.size(); i++) {
-		// ThreadBankConflict threadBankConflict = gkleeLog.threadBankConflicts.get(i);
-		// subTreeItem = new TreeItem(treeItem, SWT.NONE);
-		// subTreeItem.setText(threadBankConflict.getType().toString());
-		// subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
-		// subSubTreeItem.setText(threadBankConflict.getThread1().toString());
-		// // TODO make this double-clickable to jump to this line in the file
-		// subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
-		// subSubTreeItem.setText(threadBankConflict.getThread2().toString());
-		// }
-		//
-		// treeItem = new TreeItem(this.bankConflictTree, SWT.NONE);
-		// treeItem.setText(Messages.BANK_CONFLICTS_ACROSS_WARPS);
-		// for (int i = 0; i < gkleeLog.threadBankConflictsAcrossWarps.size(); i++) {
-		// ThreadBankConflict threadBankConflict = gkleeLog.threadBankConflictsAcrossWarps.get(i);
-		// subTreeItem = new TreeItem(treeItem, SWT.NONE);
-		// subTreeItem.setText(threadBankConflict.getType().toString());
-		// subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
-		// subSubTreeItem.setText(threadBankConflict.getThread1().toString());
-		// // TODO make this double-clickable to jump to this line in the file
-		// subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
-		// subSubTreeItem.setText(threadBankConflict.getThread2().toString());
-		// }
 	}
 
-	private void updateWarpDivergence(GkleeLog gkleeLog, IProject project) {
-		this.warpDivergenceTree.clearAll(true);
-		Image image;
-		int rate = gkleeLog.getWarpDivergenceRate();
-		// TODO change constant to preference
-		if (rate > 50) {
-			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
-		}
-		else if (rate > 0) {
-			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
-		}
-		else {
-			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
-		}
-		this.warpDivergenceTab.setImage(image);
-		gkleeLog.getWarpDivergenceStats().setupTree(this.warpDivergenceTree, null);
-		TreeItem treeItem, subTreeItem, subSubTreeItem;
-		List<WarpDivergence> warpDivergences = gkleeLog.getWarpDivergences();
-		int size = warpDivergences.size();
-		for (int i = 0; i < size; i++) {
-			WarpDivergence warpDivergence = warpDivergences.get(i);
-			treeItem = new TreeItem(this.warpDivergenceTree, SWT.NONE);
-			List<int[]> sets = warpDivergence.getSets();
-			if (sets.size() > 1) {
-				treeItem.setText(String.format(Messages.WARP_DIVERGES_INTO_FOLLOWING_SETS, warpDivergence.getWarpNumber()));
-				for (int j = 0; j < sets.size(); j++) {
-					subTreeItem = new TreeItem(treeItem, SWT.NONE);
-					subTreeItem.setText(String.format(Messages.SET, j));
-					StringBuilder stringBuilder = new StringBuilder();
-					int[] set = sets.get(j);
-					for (int k = 0; k < set.length; k++) {
-						stringBuilder.append(set[k] + ", "); //$NON-NLS-1$
-					}
-					subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
-					subSubTreeItem.setText(stringBuilder.toString());
-				}
-			}
-			else {
-				treeItem.setText(String.format(Messages.WARP_DOES_NOT_DIVERGE, warpDivergence.getWarpNumber()));
-			}
-		}
-	}
-
+	/*
+	 * Updates the Deadlocks Tab
+	 */
 	private void updateDeadlocks(GkleeLog gkleeLog, IProject project) {
 		this.deadlockTree.clearAll(true);
 		Image image;
@@ -346,30 +203,138 @@ public class GIGView extends ViewPart {
 				+ Messages.POTENTIAL_DEADLOCK_SAME_LENGTH, Messages.POTENTIAL_DEADLOCK_SAME_LENGTH, project);
 		potentialVaried.setupTree(this.deadlockTree, Messages.POTENTIAL_DEADLOCK_VARIED_LENGTH, Messages.NO
 				+ Messages.POTENTIAL_DEADLOCK_VARIED_LENGTH, Messages.POTENTIAL_DEADLOCK_VARIED_LENGTH, project);
-		// if (gkleeLog.threadsThatWaitAtExplicitSyncThreads == null) {
-		//			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
-		// TreeItem treeItem = new TreeItem(this.deadlockTree, SWT.NONE);
-		// treeItem.setText(Messages.NO_DEADLOCK);
-		// }
-		// else {
-		//			image = GIGPlugin.getImageDescriptor("icons/icon_error.gif").createImage(); //$NON-NLS-1$
-		// TreeItem treeItem = new TreeItem(this.deadlockTree, SWT.NONE);
-		// treeItem.setText(Messages.THREADS_THAT_WAIT_AT_EXPLICIT_SYNC_THREADS);
-		// TreeItem subTreeItem;
-		// StringBuilder stringBuilder = new StringBuilder();
-		// for (int i = 0; i < gkleeLog.threadsThatWaitAtExplicitSyncThreads.length; i++) {
-		//				stringBuilder.append(gkleeLog.threadsThatWaitAtExplicitSyncThreads[i] + ", "); //$NON-NLS-1$
-		// }
-		// subTreeItem = new TreeItem(treeItem, SWT.NONE);
-		// subTreeItem.setText(stringBuilder.toString());
-		// treeItem = new TreeItem(this.deadlockTree, SWT.NONE);
-		// treeItem.setText(Messages.THREADS_THAT_WAIT_AT_THE_RECONVERGENT_POINT);
-		// stringBuilder = new StringBuilder();
-		// for (int i = 0; i < gkleeLog.threadsThatWaitAtReConvergentPoint.length; i++) {
-		//				stringBuilder.append(gkleeLog.threadsThatWaitAtReConvergentPoint[i] + ", "); //$NON-NLS-1$
-		// }
-		// subTreeItem = new TreeItem(treeItem, SWT.NONE);
-		// subTreeItem.setText(stringBuilder.toString());
-		// }
+	}
+
+	/*
+	 * Updates the Memory Coalescing Tab
+	 */
+	private void updateMemoryCoalescing(GkleeLog gkleeLog, IProject project) {
+		this.memoryCoalescingTree.clearAll(true);
+		Image image;
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		final int rate = gkleeLog.getMemoryCoalescingRate();
+		if (rate < preferenceStore.getDefaultInt(Messages.MEMORY_COALESCING_HIGH)) {
+			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
+		}
+		else if (rate < preferenceStore.getDefaultInt(Messages.MEMORY_COALESCING_LOW)) {
+			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.memoryCoalescingTab.setImage(image);
+		gkleeLog.getMemoryCoalescingStats().setupTree(this.memoryCoalescingTree, gkleeLog.getMemoryCoalescingLocation());
+		gkleeLog.getMemoryCoalescing().setupTree(this.memoryCoalescingTree, Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESSES,
+				Messages.NO + Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESSES, Messages.NONCOALESCED_GLOBAL_MEMORY_ACCESS, project);
+	}
+
+	/*
+	 * Updates the Other tab
+	 */
+	private void updateOther(GkleeLog gkleeLog, IProject project) {
+		this.otherTree.clearAll(true);
+		Image image;
+		OrganizedThreadInfo missingVolatile, assertion;
+		missingVolatile = gkleeLog.getMissingVolatile();
+		assertion = gkleeLog.getAssertions();
+		final boolean other = !(missingVolatile.isEmpty() && assertion.isEmpty());
+		if (other) {
+			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.otherTab.setImage(image);
+
+		assertion.setupTree(this.otherTree, Messages.ASSERTION_VIOLATION, Messages.NO + Messages.ASSERTION_VIOLATION,
+				Messages.ASSERTION_VIOLATION, project);
+		missingVolatile.setupTree(this.otherTree, Messages.MISSING_VOLATILE, Messages.NO + Messages.MISSING_VOLATILE,
+				Messages.MISSING_VOLATILE, project);
+	}
+
+	/*
+	 * Updates the Data Races tab
+	 */
+	private void updateRaces(GkleeLog gkleeLog, IProject project) {
+		this.raceTree.clearAll(true);
+		Image image;
+		OrganizedThreadInfo wwrwb, wwrw, wwrawb, wwraw, rwraw, wwbdb, wwbd, rwbd, rw, ww;
+		wwrwb = gkleeLog.getWwrwb();
+		wwrw = gkleeLog.getWwrw();
+		wwrawb = gkleeLog.getWwrawb();
+		wwraw = gkleeLog.getWwraw();
+		rwraw = gkleeLog.getRwraw();
+		wwbdb = gkleeLog.getWwbdb();
+		wwbd = gkleeLog.getWwbd();
+		rwbd = gkleeLog.getRwbd();
+		rw = gkleeLog.getRw();
+		ww = gkleeLog.getWw();
+		final boolean races = !(wwrwb.isEmpty() && wwrw.isEmpty() && wwrawb.isEmpty() && wwraw.isEmpty() && rwraw.isEmpty()
+				&& wwbdb.isEmpty() && wwbd.isEmpty() && rwbd.isEmpty() && rw.isEmpty() && ww.isEmpty());
+		if (races) {
+			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
+			wwrwb.setupTree(this.raceTree, Messages.WWRWB, null, Messages.WWRWB, project);
+			wwrw.setupTree(this.raceTree, Messages.WWRW, null, Messages.WWRW, project);
+			wwrawb.setupTree(this.raceTree, Messages.WWRAWB, null, Messages.WWRAWB, project);
+			wwraw.setupTree(this.raceTree, Messages.WWRAW, null, Messages.WWRAW, project);
+			rwraw.setupTree(this.raceTree, Messages.RWRAW, null, Messages.RWRAW, project);
+			wwbdb.setupTree(this.raceTree, Messages.WWBDB, null, Messages.WWBDB, project);
+			wwbd.setupTree(this.raceTree, Messages.WWBD, null, Messages.WWBD, project);
+			rwbd.setupTree(this.raceTree, Messages.RWBD, null, Messages.RWBD, project);
+			rw.setupTree(this.raceTree, Messages.RW, null, Messages.RW, project);
+			ww.setupTree(this.raceTree, Messages.WW, null, Messages.WW, project);
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+			final TreeItem item = new TreeItem(raceTree, SWT.NONE);
+			item.setText(Messages.NO + Messages.RACES);
+		}
+		this.raceTab.setImage(image);
+	}
+
+	/*
+	 * Updates the warp divergence tab.
+	 */
+	private void updateWarpDivergence(GkleeLog gkleeLog, IProject project) {
+		this.warpDivergenceTree.clearAll(true);
+		Image image;
+		final int rate = gkleeLog.getWarpDivergenceRate();
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		if (rate > preferenceStore.getDefaultInt(Messages.WARP_DIVERGENCE_HIGH)) {
+			image = GIGPlugin.getImageDescriptor("icons/errorwarning_tab.gif").createImage(); //$NON-NLS-1$
+		}
+		else if (rate > preferenceStore.getDefaultInt(Messages.WARP_DIVERGENCE_LOW)) {
+			image = GIGPlugin.getImageDescriptor("icons/icon_warning.gif").createImage(); //$NON-NLS-1$
+		}
+		else {
+			image = GIGPlugin.getImageDescriptor("icons/no-error.gif").createImage(); //$NON-NLS-1$
+		}
+		this.warpDivergenceTab.setImage(image);
+		gkleeLog.getWarpDivergenceStats().setupTree(this.warpDivergenceTree, null);
+		TreeItem treeItem, subTreeItem, subSubTreeItem;
+		final List<WarpDivergence> warpDivergences = gkleeLog.getWarpDivergences();
+		final int size = warpDivergences.size();
+		for (int i = 0; i < size; i++) {
+			final WarpDivergence warpDivergence = warpDivergences.get(i);
+			treeItem = new TreeItem(this.warpDivergenceTree, SWT.NONE);
+			final List<int[]> sets = warpDivergence.getSets();
+			if (sets.size() > 1) {
+				treeItem.setText(String.format(Messages.WARP_DIVERGES_INTO_FOLLOWING_SETS, warpDivergence.getWarpNumber()));
+				for (int j = 0; j < sets.size(); j++) {
+					subTreeItem = new TreeItem(treeItem, SWT.NONE);
+					subTreeItem.setText(String.format(Messages.SET, j));
+					final StringBuilder stringBuilder = new StringBuilder();
+					final int[] set = sets.get(j);
+					for (final int element : set) {
+						stringBuilder.append(element + ", "); //$NON-NLS-1$
+					}
+					subSubTreeItem = new TreeItem(subTreeItem, SWT.NONE);
+					subSubTreeItem.setText(stringBuilder.toString());
+				}
+			}
+			else {
+				treeItem.setText(String.format(Messages.WARP_DOES_NOT_DIVERGE, warpDivergence.getWarpNumber()));
+			}
+		}
 	}
 }

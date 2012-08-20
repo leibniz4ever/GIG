@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.log;
 
 import java.io.InputStream;
@@ -8,7 +18,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class GkleeLog {
 
@@ -26,7 +41,6 @@ public class GkleeLog {
 			.compile("MC:(\\d+):(\\d+):(\\d+):(\\d+):(\\d+):(\\d+):(\\d+)"); //$NON-NLS-1$
 	private static final Pattern aveWDPattern = Pattern
 			.compile("WD:(\\d+):(\\d+):(\\d+):(\\d+):(\\d+):(\\d+):(\\d+)"); //$NON-NLS-1$
-
 	private static final Pattern memoryCoalescingPattern = Pattern
 			.compile("\\** Start checking memory coalescing at DeviceMemory at capability: .* \\**"); //$NON-NLS-1$
 	private final List<WarpDivergence> warpDivergences = new ArrayList<WarpDivergence>();
@@ -36,7 +50,7 @@ public class GkleeLog {
 	private final OrganizedThreadInfo deadlocks = new OrganizedThreadInfo();
 	private final OrganizedThreadInfo memoryCoalescings = new OrganizedThreadInfo();
 	private final OrganizedThreadInfo missingVolatiles = new OrganizedThreadInfo();
-	// These are a bunch of read/write races
+	// These are a bunch of read/write races, see the parse function for what they mean
 	private final OrganizedThreadInfo rwraws = new OrganizedThreadInfo(), rwbds = new OrganizedThreadInfo(),
 			rws = new OrganizedThreadInfo(), rrbcs = new OrganizedThreadInfo(), rwbcs = new OrganizedThreadInfo(),
 			wwrwbs = new OrganizedThreadInfo(), wwrws = new OrganizedThreadInfo(),
@@ -44,108 +58,119 @@ public class GkleeLog {
 			wwbdbs = new OrganizedThreadInfo(), wwbds = new OrganizedThreadInfo(), wws = new OrganizedThreadInfo(),
 			wwbcs = new OrganizedThreadInfo();
 	private Statistic bankConflictStats, memoryCoalescingStats, warpDivergenceStats;
+	// describes which line in the file the main memory coalescing information is. May be null.
 	private Integer memoryCoalescingLocation;
 
-	public GkleeLog(InputStream is, IFile logFile) {
+	public GkleeLog(InputStream is, IFile logFile) throws LogException {
+		// reset the static info
 		ThreadInfo.reset();
-		Scanner scanner = new Scanner(is);
-		if (scanner.hasNextLine()) {
-			int lineNumber = 0;
-			for (String line = scanner.nextLine(); scanner.hasNextLine(); line = scanner.nextLine()) {
+
+		// begin parsing one line at a time
+		final Scanner scanner = new Scanner(is);
+
+		// lineNumber tracks which line we are on, so that we can make reference to specific lines of the log file
+		int lineNumber = 0;
+		String line;
+		while (scanner.hasNextLine()) {
+			line = scanner.nextLine();
+			lineNumber++;
+			Matcher matcher = emacsPattern.matcher(line);
+			if (matcher.matches()) {
+				parse(matcher, logFile, lineNumber);
+				continue;
+			}
+			matcher = warpDivergencePattern.matcher(line);
+			if (matcher.matches()) {
+				line = scanner.nextLine();
 				lineNumber++;
-				Matcher matcher = emacsPattern.matcher(line);
-				if (matcher.matches()) {
-					parse(matcher, logFile, lineNumber);
-					continue;
-				}
-				matcher = warpDivergencePattern.matcher(line);
-				if (matcher.matches()) {
-					line = scanner.nextLine();
-					lineNumber++;
-					while (!line.equals("")) { //$NON-NLS-1$
-						matcher = threadsDivergedPattern.matcher(line);
-						if (matcher.matches()) {
-							int warp = Integer.parseInt(matcher.group(1));
-							List<int[]> sets = new ArrayList<int[]>();
+				while (!line.equals("")) { //$NON-NLS-1$
+					matcher = threadsDivergedPattern.matcher(line);
+					if (matcher.matches()) {
+						final int warp = Integer.parseInt(matcher.group(1));
+						final List<int[]> sets = new ArrayList<int[]>();
+
+						line = scanner.nextLine();
+						lineNumber++;
+						matcher = setPattern.matcher(line);
+						while (matcher.matches()) {
+							line = scanner.nextLine();
+							lineNumber++;
+							final Scanner scan = new Scanner(line);
+							final List<Integer> threads = new ArrayList<Integer>();
+							while (scan.hasNext()) {
+								scan.next();
+								final int thread = Integer.parseInt(scan.next());
+								scan.next();
+								threads.add(thread);
+							}
+							final int[] threadsArray = new int[threads.size()];
+							for (int i = 0; i < threadsArray.length; i++) {
+								threadsArray[i] = threads.get(i);
+							}
+							sets.add(threadsArray);
 
 							line = scanner.nextLine();
 							lineNumber++;
 							matcher = setPattern.matcher(line);
-							while (matcher.matches()) {
-								line = scanner.nextLine();
-								lineNumber++;
-								Scanner scan = new Scanner(line);
-								List<Integer> threads = new ArrayList<Integer>();
-								while (scan.hasNext()) {
-									scan.next();
-									int thread = Integer.parseInt(scan.next());
-									scan.next();
-									threads.add(thread);
-								}
-								int[] threadsArray = new int[threads.size()];
-								for (int i = 0; i < threadsArray.length; i++) {
-									threadsArray[i] = threads.get(i);
-								}
-								sets.add(threadsArray);
-
-								line = scanner.nextLine();
-								lineNumber++;
-								matcher = setPattern.matcher(line);
-							}
-
-							WarpDivergence warpDivergence = new WarpDivergence(sets, warp);
-							warpDivergences.add(warpDivergence);
-							continue;
 						}
-						line = scanner.nextLine();
-						lineNumber++;
+
+						final WarpDivergence warpDivergence = new WarpDivergence(sets, warp);
+						warpDivergences.add(warpDivergence);
+						continue;
 					}
-					continue;
+					line = scanner.nextLine();
+					lineNumber++;
 				}
-				matcher = aveBCPattern.matcher(line);
-				if (matcher.matches()) {
-					int aveWarp = Integer.parseInt(matcher.group(2));
-					int numWarps = Integer.parseInt(matcher.group(3));
-					int totalWarps = Integer.parseInt(matcher.group(4));
-					int aveBI = Integer.parseInt(matcher.group(5));
-					int numBIs = Integer.parseInt(matcher.group(6));
-					int totalBIs = Integer.parseInt(matcher.group(7));
-					bankConflictStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile, lineNumber);
-					continue;
-				}
-				matcher = aveMCPattern.matcher(line);
-				if (matcher.matches()) {
-					int aveWarp = Integer.parseInt(matcher.group(2));
-					int numWarps = Integer.parseInt(matcher.group(3));
-					int totalWarps = Integer.parseInt(matcher.group(4));
-					int aveBI = Integer.parseInt(matcher.group(5));
-					int numBIs = Integer.parseInt(matcher.group(6));
-					int totalBIs = Integer.parseInt(matcher.group(7));
-					memoryCoalescingStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile,
-							lineNumber);
-					continue;
-				}
-				matcher = aveWDPattern.matcher(line);
-				if (matcher.matches()) {
-					int aveWarp = Integer.parseInt(matcher.group(2));
-					int numWarps = Integer.parseInt(matcher.group(3));
-					int totalWarps = Integer.parseInt(matcher.group(4));
-					int aveBI = Integer.parseInt(matcher.group(5));
-					int numBIs = Integer.parseInt(matcher.group(6));
-					int totalBIs = Integer.parseInt(matcher.group(7));
-					warpDivergenceStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile, lineNumber);
-					continue;
-				}
-				matcher = memoryCoalescingPattern.matcher(line);
-				if (matcher.matches()) {
-					this.memoryCoalescingLocation = lineNumber;
-					continue;
-				}
+				continue;
+			}
+			matcher = aveBCPattern.matcher(line);
+			if (matcher.matches()) {
+				final int aveWarp = Integer.parseInt(matcher.group(2));
+				final int numWarps = Integer.parseInt(matcher.group(3));
+				final int totalWarps = Integer.parseInt(matcher.group(4));
+				final int aveBI = Integer.parseInt(matcher.group(5));
+				final int numBIs = Integer.parseInt(matcher.group(6));
+				final int totalBIs = Integer.parseInt(matcher.group(7));
+				bankConflictStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile, lineNumber);
+				continue;
+			}
+			matcher = aveMCPattern.matcher(line);
+			if (matcher.matches()) {
+				final int aveWarp = Integer.parseInt(matcher.group(2));
+				final int numWarps = Integer.parseInt(matcher.group(3));
+				final int totalWarps = Integer.parseInt(matcher.group(4));
+				final int aveBI = Integer.parseInt(matcher.group(5));
+				final int numBIs = Integer.parseInt(matcher.group(6));
+				final int totalBIs = Integer.parseInt(matcher.group(7));
+				memoryCoalescingStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile,
+						lineNumber);
+				continue;
+			}
+			matcher = aveWDPattern.matcher(line);
+			if (matcher.matches()) {
+				final int aveWarp = Integer.parseInt(matcher.group(2));
+				final int numWarps = Integer.parseInt(matcher.group(3));
+				final int totalWarps = Integer.parseInt(matcher.group(4));
+				final int aveBI = Integer.parseInt(matcher.group(5));
+				final int numBIs = Integer.parseInt(matcher.group(6));
+				final int totalBIs = Integer.parseInt(matcher.group(7));
+				warpDivergenceStats = new Statistic(aveWarp, numWarps, totalWarps, aveBI, numBIs, totalBIs, logFile, lineNumber);
+				continue;
+			}
+			matcher = memoryCoalescingPattern.matcher(line);
+			if (matcher.matches()) {
+				this.memoryCoalescingLocation = lineNumber;
+				continue;
 			}
 		}
 		scanner.close();
 
-		int threadsPerWarp = this.warpDivergences.get(0).getThreadsPerWarp();
+		// Done parsing, now prepare the data for display
+		// this part will have failed to parse if the log file had a problem
+		if (this.warpDivergences.size() == 0) {
+			throw new LogException(Messages.BAD_LOG_FILE);
+		}
+		final int threadsPerWarp = this.warpDivergences.get(0).getThreadsPerWarp();
 		OrganizedThreadInfo.setThreadsPerWarp(threadsPerWarp);
 		this.assertions.organize();
 		this.memoryCoalescings.organize();
@@ -168,27 +193,157 @@ public class GkleeLog {
 		this.wws.organize();
 	}
 
+	public OrganizedThreadInfo getAssertions() {
+		return this.assertions;
+	}
+
+	public int getBankConflictRate() {
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		final boolean bank = preferenceStore.getBoolean(Messages.BANK_OR_WARP);
+		if (bank) {
+			return this.bankConflictStats.getAverageBank();
+		}
+		return this.bankConflictStats.getAverageWarp();
+	}
+
+	public Statistic getBankConflictStats() {
+		return this.bankConflictStats;
+	}
+
+	public OrganizedThreadInfo getDeadlocks() {
+		return this.deadlocks;
+	}
+
+	public OrganizedThreadInfo getMemoryCoalescing() {
+		return this.memoryCoalescings;
+	}
+
+	public Integer getMemoryCoalescingLocation() {
+		return this.memoryCoalescingLocation;
+	}
+
+	public int getMemoryCoalescingRate() {
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		final boolean bank = preferenceStore.getBoolean(Messages.BANK_OR_WARP);
+		if (bank) {
+			return this.memoryCoalescingStats.getAverageBank();
+		}
+		return this.memoryCoalescingStats.getAverageWarp();
+	}
+
+	public Statistic getMemoryCoalescingStats() {
+		return this.memoryCoalescingStats;
+	}
+
+	public OrganizedThreadInfo getMissingVolatile() {
+		return this.missingVolatiles;
+	}
+
+	public OrganizedThreadInfo getPotentialSame() {
+		return this.potentialDeadlocksSameLength;
+	}
+
+	public OrganizedThreadInfo getPotentialVaried() {
+		return this.potentialDeadlocksVariedLength;
+	}
+
+	public OrganizedThreadInfo getRrbc() {
+		return this.rrbcs;
+	}
+
+	public OrganizedThreadInfo getRw() {
+		return this.rws;
+	}
+
+	public OrganizedThreadInfo getRwbc() {
+		return this.rwbcs;
+	}
+
+	public OrganizedThreadInfo getRwbd() {
+		return this.rwbds;
+	}
+
+	public OrganizedThreadInfo getRwraw() {
+		return this.rwraws;
+	}
+
+	public int getWarpDivergenceRate() {
+		final IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		final boolean bank = preferenceStore.getBoolean(Messages.BANK_OR_WARP);
+		if (bank) {
+			return this.warpDivergenceStats.getAverageBank();
+		}
+		return this.warpDivergenceStats.getAverageWarp();
+	}
+
+	public List<WarpDivergence> getWarpDivergences() {
+		return this.warpDivergences;
+	}
+
+	public Statistic getWarpDivergenceStats() {
+		return this.warpDivergenceStats;
+	}
+
+	public OrganizedThreadInfo getWw() {
+		return this.wws;
+	}
+
+	public OrganizedThreadInfo getWwbc() {
+		return this.wwbcs;
+	}
+
+	public OrganizedThreadInfo getWwbd() {
+		return this.wwbds;
+	}
+
+	public OrganizedThreadInfo getWwbdb() {
+		return this.wwbdbs;
+	}
+
+	public OrganizedThreadInfo getWwraw() {
+		return this.wwraws;
+	}
+
+	public OrganizedThreadInfo getWwrawb() {
+		return this.wwrawbs;
+	}
+
+	public OrganizedThreadInfo getWwrw() {
+		return this.wwrws;
+	}
+
+	public OrganizedThreadInfo getWwrwb() {
+		return this.wwrwbs;
+	}
+
+	/*
+	 * Parses the emacs pattern
+	 */
 	private void parse(Matcher matcher, IFile logFile, int line) {
 		// emacs:code:block0:thread0:file0:line0:block1:thread1:file1:line1
-		String code = matcher.group(1);
-		String block0 = matcher.group(2);
-		String thread0 = matcher.group(3);
-		String file0 = matcher.group(4);
-		String line0 = matcher.group(5);
-		String block1 = matcher.group(6);
-		String thread1 = matcher.group(7);
-		String file1 = matcher.group(8);
-		String line1 = matcher.group(9);
-		ThreadInfo threadInfo0 = new ThreadInfo(block0, thread0, file0, line0);
-		ThreadInfo threadInfo1 = new ThreadInfo(block1, thread1, file1, line1);
+		final String code = matcher.group(1);
+		final String block0 = matcher.group(2);
+		final String thread0 = matcher.group(3);
+		final String file0 = matcher.group(4);
+		final String line0 = matcher.group(5);
+		final String block1 = matcher.group(6);
+		final String thread1 = matcher.group(7);
+		final String file1 = matcher.group(8);
+		final String line1 = matcher.group(9);
+		final ThreadInfo threadInfo0 = new ThreadInfo(block0, thread0, file0, line0, logFile);
+		final ThreadInfo threadInfo1 = new ThreadInfo(block1, thread1, file1, line1, logFile);
+
+		// this might fail in future releases of gklee, it is important to log the failure, but don't crash the logging
 		try {
 			parse(code, new TwoThreadInfo(threadInfo0, threadInfo1, logFile, line));
-		} catch (LogException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (final LogException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.LOG_EXCEPTION, e));
 		}
 	}
 
+	/*
+	 * parses the code part of the emacs line and puts the already parsed TwoThreadInfo in the correct group
+	 */
 	private void parse(String code, TwoThreadInfo threadInfo) throws LogException {
 		/*
 		 * ("assert" . "Assertion violation")
@@ -212,6 +367,7 @@ public class GkleeLog {
 		 * ("mv" . "Missing volatile")
 		 * ("wd" . "Warp divergence") --I'm not seeing this in any log files that should have it
 		 */
+		// switch on strings not supported in java, but we can still avoid long if-else statements
 		switch (code.charAt(0)) {
 		case 'a':
 			// ("assert" . "Assertion violation")
@@ -331,117 +487,6 @@ public class GkleeLog {
 			break;
 		}
 		throw new LogException(Messages.LOG_EXCEPTION + code);
-	}
-
-	public int getMemoryCoalescingRate() {
-		// TODO add in preferences to switch between warp and BI
-		return this.memoryCoalescingStats.getAverageWarp();
-	}
-
-	public OrganizedThreadInfo getMemoryCoalescing() {
-		return this.memoryCoalescings;
-	}
-
-	public int getBankConflictRate() {
-		// TODO add in preferences to switch
-		return this.bankConflictStats.getAverageWarp();
-	}
-
-	public OrganizedThreadInfo getRrbc() {
-		return this.rrbcs;
-	}
-
-	public OrganizedThreadInfo getRwbc() {
-		return this.rwbcs;
-	}
-
-	public OrganizedThreadInfo getWwbc() {
-		return this.wwbcs;
-	}
-
-	public int getWarpDivergenceRate() {
-		// TODO add in preferences
-		return this.warpDivergenceStats.getAverageWarp();
-	}
-
-	public List<WarpDivergence> getWarpDivergences() {
-		return this.warpDivergences;
-	}
-
-	public OrganizedThreadInfo getDeadlocks() {
-		return this.deadlocks;
-	}
-
-	public OrganizedThreadInfo getPotentialSame() {
-		return this.potentialDeadlocksSameLength;
-	}
-
-	public OrganizedThreadInfo getPotentialVaried() {
-		return this.potentialDeadlocksVariedLength;
-	}
-
-	public OrganizedThreadInfo getWwrwb() {
-		return this.wwrwbs;
-	}
-
-	public OrganizedThreadInfo getWwrw() {
-		return this.wwrws;
-	}
-
-	public OrganizedThreadInfo getWwrawb() {
-		return this.wwrawbs;
-	}
-
-	public OrganizedThreadInfo getWwraw() {
-		return this.wwraws;
-	}
-
-	public OrganizedThreadInfo getRwraw() {
-		return this.rwraws;
-	}
-
-	public OrganizedThreadInfo getWwbdb() {
-		return this.wwbdbs;
-	}
-
-	public OrganizedThreadInfo getWwbd() {
-		return this.wwbds;
-	}
-
-	public OrganizedThreadInfo getRwbd() {
-		return this.rwbds;
-	}
-
-	public OrganizedThreadInfo getRw() {
-		return this.rws;
-	}
-
-	public OrganizedThreadInfo getWw() {
-		return this.wws;
-	}
-
-	public OrganizedThreadInfo getMissingVolatile() {
-		return this.missingVolatiles;
-	}
-
-	public OrganizedThreadInfo getAssertions() {
-		return this.assertions;
-	}
-
-	public Statistic getMemoryCoalescingStats() {
-		return this.memoryCoalescingStats;
-	}
-
-	public Statistic getBankConflictStats() {
-		return this.bankConflictStats;
-	}
-
-	public Statistic getWarpDivergenceStats() {
-		return this.warpDivergenceStats;
-	}
-
-	public Integer getMemoryCoalescingLocation() {
-		return this.memoryCoalescingLocation;
 	}
 
 }

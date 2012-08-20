@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.messages;
 
 import org.eclipse.osgi.util.NLS;
@@ -72,6 +82,29 @@ public class Messages extends NLS {
 	public static String WARP_STATISTIC;
 	public static String BLOCK_STATISTIC;
 	public static String CANCEL;
+	public static String ILLEGAL_COMMAND;
+	public static String ILLEGAL_COMMAND_MESSAGE;
+	public static String INCORRECT_PASSWORD;
+	public static String INCORRECT_PASSWORD_MESSAGE;
+	public static String BANK_OR_WARP;
+	public static String BANK_CONFLICT_LOW;
+	public static String BANK_CONFLICT_HIGH;
+	public static String MEMORY_COALESCING_LOW;
+	public static String MEMORY_COALESCING_HIGH;
+	public static String WARP_DIVERGENCE_LOW;
+	public static String WARP_DIVERGENCE_HIGH;
+	public static String INCORRECT_FILE_EXTENSION;
+	public static String CHANGE_FILE_EXTENSION;
+	public static String SELECTION_ERROR;
+	public static String SELECT_ONE_FILE;
+	public static String TARGET_PROJECT;
+	public static String PROJECT_NOT_FOUND;
+	public static String PROJECT_NOT_FOUND_MESSAGE;
+	public static String BAD_LOG_FILE;
+	public static String EXCEPTION_WHILE_PARSING;
+	public static String COMPILATION_ERROR;
+	public static String SEE_CONSOLE;
+	public static String RUNTIME_ERROR;
 
 	static {
 		// initialize resource bundle

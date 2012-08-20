@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.handlers;
 
 import java.io.IOException;
@@ -17,6 +27,7 @@ import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.ptp.gig.util.GIGUtilities.JobState;
 import org.eclipse.ptp.gig.views.GIGView;
+import org.eclipse.ptp.gig.views.ServerView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
@@ -31,39 +42,44 @@ public class ToolbarHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorInput input = HandlerUtil.getActiveEditorInputChecked(event);
+		final IEditorInput input;
+		try {
+			input = HandlerUtil.getActiveEditorInputChecked(event);
+		} catch (final ExecutionException e) {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, e.getMessage(), e));
+			return null;
+		}
 		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
-			IFile file = fileInput.getFile();
+			final IFileEditorInput fileInput = (IFileEditorInput) input;
+			final IFile file = fileInput.getFile();
 			final IPath filePath = file.getFullPath();
 
-			final IWorkbench wb = PlatformUI.getWorkbench();
-			final IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+			// We need to show the GIGView in order to ensure it is loaded, same with the ServerView
+			final IWorkbench workBench = PlatformUI.getWorkbench();
+			final IWorkbenchWindow window = workBench.getActiveWorkbenchWindow();
 			final IWorkbenchPage page = window.getActivePage();
 			try {
 				page.showView(GIGView.ID);
-			} catch (PartInitException e) {
+				page.showView(ServerView.ID);
+			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(
-						new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
+						new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
 			}
 
 			// start it in a new thread so as to not block UI thread
-			Job job = new Job(Messages.RUN_GKLEE) {
-
+			final Job job = new Job(Messages.RUN_GKLEE) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						// TODO add a return type or something so that we can check if OK or cancelled
-						GIGUtilities.processSource(filePath);
-						GIGUtilities.setJobState(JobState.None);
-						return Status.OK_STATUS;
-					} catch (IOException e) {
-						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
-					} catch (CoreException e) {
+						final IStatus ret = GIGUtilities.processSource(filePath);
+						return ret;
+					} catch (final IOException e) {
+						StatusManager.getManager().handle(new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+					} catch (final CoreException e) {
 						StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						StatusManager.getManager().handle(
-								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
+								new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
 					}
 					finally {
 						GIGUtilities.setJobState(JobState.None);
@@ -73,22 +89,6 @@ public class ToolbarHandler extends AbstractHandler {
 			};
 
 			GIGUtilities.startJob(job);
-
-			// (new Thread() {
-			// @Override
-			// public void run() {
-			// try {
-			// GIGUtilities.processSource(filePath);
-			// } catch (IOException e) {
-			// StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IOException, e));
-			// } catch (CoreException e) {
-			// StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
-			// } catch (InterruptedException e) {
-			// StatusManager.getManager().handle(
-			// new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.InterruptedException, e));
-			// }
-			// }
-			// }).start();
 		}
 
 		return null;

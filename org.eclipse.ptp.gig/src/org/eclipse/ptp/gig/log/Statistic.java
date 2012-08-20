@@ -1,7 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.log;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ptp.gig.GIGPlugin;
 import org.eclipse.ptp.gig.messages.Messages;
 import org.eclipse.ptp.gig.util.GIGUtilities;
 import org.eclipse.swt.SWT;
@@ -11,7 +24,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+/*
+ * represents a statistic reported near the end of the gklee kernel
+ */
 public class Statistic {
 
 	// the ave refers to a percentage, and should equal num*100/total
@@ -30,27 +47,34 @@ public class Statistic {
 		this.line = line;
 	}
 
+	public int getAverageBank() {
+		return this.aveBI;
+	}
+
 	public int getAverageWarp() {
 		return aveWarp;
 	}
 
+	/*
+	 * Sets up the Statistic in the tree
+	 */
 	public void setupTree(Tree tree, Integer optionalLine) {
 		tree.addListener(SWT.MouseDoubleClick, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
-				Widget widget = event.widget;
+				final Widget widget = event.widget;
 				if (widget instanceof Tree) {
-					Tree tree = (Tree) widget;
-					TreeItem item = tree.getItem(new Point(event.x, event.y));
-					Object o = item.getData();
+					final Tree tree = (Tree) widget;
+					final TreeItem item = tree.getItem(new Point(event.x, event.y));
+					final Object o = item.getData();
 					if (o instanceof Integer) {
-						Integer line = (Integer) o;
+						final Integer line = (Integer) o;
 						try {
 							GIGUtilities.jumpToLine(logFile, line);
-						} catch (CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (final CoreException e) {
+							StatusManager.getManager().handle(
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
 						}
 					}
 				}

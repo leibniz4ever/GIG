@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.util;
 
 import java.io.IOException;
@@ -8,6 +18,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ptp.gig.views.ServerTreeItem;
 
+/*
+ * Facilitates the receiving of data into a project via the import.
+ */
 public class ProjectToRecv {
 
 	private final List<FolderToRecv> folders = new ArrayList<FolderToRecv>();
@@ -19,11 +32,11 @@ public class ProjectToRecv {
 	 * Returns it as a folder if it is a folder, null otherwise
 	 */
 	public FolderToRecv add(ServerTreeItem item, boolean addAll) {
-		ServerTreeItem parentItem = item.getParent();
+		final ServerTreeItem parentItem = item.getParent();
 		if (parentItem.getParent() == null) {
 			if (item.isFolder()) {
 				FolderToRecv targetFolder = null;
-				for (FolderToRecv folder : folders) {
+				for (final FolderToRecv folder : folders) {
 					if (item.getName().equals(folder.getName())) {
 						targetFolder = folder;
 						break;
@@ -50,9 +63,9 @@ public class ProjectToRecv {
 			}
 		}
 		else {
-			FolderToRecv parentFolder = this.add(parentItem, false);
+			final FolderToRecv parentFolder = this.add(parentItem, false);
 			if (item.isFolder()) {
-				FolderToRecv folder = parentFolder.getFolder(item.getName());
+				final FolderToRecv folder = parentFolder.getFolder(item.getName());
 				if (addAll) {
 					folder.addAll(item.getChildren());
 				}
@@ -65,6 +78,9 @@ public class ProjectToRecv {
 		}
 	}
 
+	/*
+	 * see GIGUtilites.sendNamesRecvData
+	 */
 	public void sendNamesRecvData(IProject project) throws IOException, IncorrectPasswordException, CoreException,
 			IllegalCommandException {
 		GIGUtilities.sendNamesRecvData(project, folders, files);

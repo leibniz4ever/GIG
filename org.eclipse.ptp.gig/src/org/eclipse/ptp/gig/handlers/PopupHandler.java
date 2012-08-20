@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Brandon Gibson
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Brandon Gibson - initial API and implementation and/or initial documentation
+ *******************************************************************************/
 package org.eclipse.ptp.gig.handlers;
 
 import java.io.IOException;
@@ -42,51 +52,62 @@ public class PopupHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String eventName = event.getCommand().getId();
+		// this handles two events, so find which one
+		final String eventName = event.getCommand().getId();
 		if (eventName.equals("org.eclipse.ptp.gig.commands.sourcePopup")) { //$NON-NLS-1$
-			ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+			// This means verify the one element that is selected
+			final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
 			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				Object object = structuredSelection.getFirstElement();
+				final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				if (structuredSelection.size() != 1) {
+					// short circuit if they selected more than one, or less than one
+					return null;
+				}
+				final Object object = structuredSelection.getFirstElement();
 				IFile file;
 				if (object instanceof IFile) {
 					file = (IFile) object;
 				}
-				else {
-					TranslationUnit unit = (TranslationUnit) object;
+				else if (object instanceof TranslationUnit) {
+					final TranslationUnit unit = (TranslationUnit) object;
 					file = (IFile) unit.getUnderlyingResource();
 				}
-
+				else {
+					return null;
+				}
 				final IPath filePath = file.getFullPath();
 
-				final IWorkbench wb = PlatformUI.getWorkbench();
-				final IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
+				final IWorkbench workbench = PlatformUI.getWorkbench();
+				final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 				final IWorkbenchPage page = window.getActivePage();
+				// we need to ensure the GIGView has been lazily loaded, it is also good to bring it to the front
+				// same with the ServerView
 				try {
 					page.showView(GIGView.ID);
-				} catch (PartInitException e) {
+					page.showView(ServerView.ID);
+				} catch (final PartInitException e) {
 					StatusManager.getManager().handle(
-							new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
+							new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
 				}
 
 				// start it in a new thread so as to not block UI thread
-				Job job = new Job(Messages.RUN_GKLEE) {
+				final Job job = new Job(Messages.RUN_GKLEE) {
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							// TODO add a return type or something so that we can check if OK or cancelled
-							GIGUtilities.processSource(filePath);
+							final IStatus ret = GIGUtilities.processSource(filePath);
 							GIGUtilities.setJobState(JobState.None);
-							return Status.OK_STATUS;
-						} catch (IOException e) {
+							// finally clause activates before returning
+							return ret;
+						} catch (final IOException e) {
 							StatusManager.getManager().handle(
-									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
-						} catch (CoreException e) {
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+						} catch (final CoreException e) {
 							StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 							StatusManager.getManager().handle(
-									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
 						}
 						finally {
 							GIGUtilities.setJobState(JobState.None);
@@ -100,42 +121,59 @@ public class PopupHandler extends AbstractHandler {
 			}
 		}
 		else if (eventName.equals("org.eclipse.ptp.gig.commands.sendSourceToServer")) { //$NON-NLS-1$
-			ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+			// This command is for sending folders and files to the server
+			final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
 			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 				final Object[] objectArray = structuredSelection.toArray();
 
-				Job job = new Job(Messages.SEND_TO_SERVER) {
+				// we need to ensure that the ServerView is loaded
+				final IWorkbench workbench = PlatformUI.getWorkbench();
+				final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+				final IWorkbenchPage page = window.getActivePage();
+				try {
+					page.showView(ServerView.ID);
+				} catch (final PartInitException e) {
+					StatusManager.getManager().handle(
+							new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));
+				}
+
+				final Job job = new Job(Messages.SEND_TO_SERVER) {
 
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						List<IFolder> folders = new ArrayList<IFolder>();
-						List<IFile> files = new ArrayList<IFile>();
-						for (Object o : objectArray) {
+						// Transform the objects into lists of folders and files
+						final List<IFolder> folders = new ArrayList<IFolder>();
+						final List<IFile> files = new ArrayList<IFile>();
+						for (final Object o : objectArray) {
 							if (o instanceof IFile) {
-								IFile file = (IFile) o;
+								final IFile file = (IFile) o;
 								files.add(file);
 							}
 							else if (o instanceof ICContainer) {
-								ICContainer container = (ICContainer) o;
-								IResource resource = container.getResource();
+								final ICContainer container = (ICContainer) o;
+								final IResource resource = container.getResource();
 								if (resource instanceof IFolder) {
-									IFolder folder = (IFolder) resource;
+									final IFolder folder = (IFolder) resource;
 									folders.add(folder);
 								}
 							}
 							else if (o instanceof TranslationUnit) {
-								TranslationUnit unit = (TranslationUnit) o;
-								IResource resource = unit.getResource();
+								final TranslationUnit unit = (TranslationUnit) o;
+								final IResource resource = unit.getResource();
 								if (resource instanceof IFile) {
-									IFile file = (IFile) resource;
+									final IFile file = (IFile) resource;
 									files.add(file);
 								}
+							}
+							else if (o instanceof IFolder) {
+								final IFolder folder = (IFolder) o;
+								folders.add(folder);
 							}
 						}
 						try {
 							GIGUtilities.sendFoldersAndFiles(folders, files);
-							UIJob job = new UIJob(Messages.IMPORT) {
+							final UIJob job = new UIJob(Messages.IMPORT) {
 
 								@Override
 								public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -144,19 +182,23 @@ public class PopupHandler extends AbstractHandler {
 								}
 
 							};
-							job.setPriority(UIJob.SHORT);
-							job.schedule();
-						} catch (CoreException e) {
+							GIGUtilities.startJob(job);
+							// finally activates here
+							return Status.OK_STATUS;
+						} catch (final CoreException e) {
 							StatusManager.getManager().handle(
-									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
-						} catch (IOException e) {
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.CORE_EXCEPTION, e));
+						} catch (final IOException e) {
 							StatusManager.getManager().handle(
-									new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
-						} catch (IncorrectPasswordException e) {
-							// TODO display a dialog that indicates "Incorrect Password" or something
-						} catch (IllegalCommandException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.IO_EXCEPTION, e));
+						} catch (final IncorrectPasswordException e) {
+							GIGUtilities.showErrorDialog(Messages.INCORRECT_PASSWORD, Messages.INCORRECT_PASSWORD_MESSAGE);
+							StatusManager.getManager().handle(
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.INCORRECT_PASSWORD, e));
+						} catch (final IllegalCommandException e) {
+							GIGUtilities.showErrorDialog(Messages.ILLEGAL_COMMAND, Messages.ILLEGAL_COMMAND_MESSAGE);
+							StatusManager.getManager().handle(
+									new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.ILLEGAL_COMMAND, e));
 						}
 						finally {
 							GIGUtilities.setJobState(JobState.None);

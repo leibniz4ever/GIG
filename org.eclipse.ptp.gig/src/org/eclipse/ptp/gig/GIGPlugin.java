@@ -24,6 +24,27 @@ public class GIGPlugin extends AbstractUIPlugin {
 	private static GIGPlugin plugin;
 
 	/**
+	 * Returns the shared instance
+	 * 
+	 * @return the shared instance
+	 */
+	public static GIGPlugin getDefault() {
+		return plugin;
+	}
+
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	/**
 	 * The constructor
 	 */
 	public GIGPlugin() {
@@ -50,26 +71,5 @@ public class GIGPlugin extends AbstractUIPlugin {
 		GIGUtilities.stopJob();
 		plugin = null;
 		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 * 
-	 * @return the shared instance
-	 */
-	public static GIGPlugin getDefault() {
-		return plugin;
-	}
-
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 * 
-	 * @param path
-	 *            the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 }

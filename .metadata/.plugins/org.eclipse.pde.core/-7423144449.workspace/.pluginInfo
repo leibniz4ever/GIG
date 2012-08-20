@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+	<bundle bundleID="725" localization="plugin" name="%pluginName" project="org.eclipse.ptp.gig.help" provider="%pluginProvider"/>
+	<bundle bundleID="726" class="org.eclipse.ptp.gig.GIGPlugin" localization="OSGI-INF/l10n/bundle" name="GIG" project="org.eclipse.ptp.gig"/>
+</map>

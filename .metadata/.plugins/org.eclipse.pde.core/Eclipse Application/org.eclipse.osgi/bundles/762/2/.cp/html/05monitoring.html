@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>Monitoring Jobs and Systems</title>
+<link rel="stylesheet" type="text/css" href="help.css">
+<script type="text/javascript" src="thumb.js"> </script>
+<head>
+<body>
+<h1 id="top">Monitoring Jobs and Systems</h1>
+<p>This section describes the features of PTP the enable the developer to monitor activity on target parallel machines, to monitor job status, and to control jobs. 
+It will cover the following topics:</p>
+
+<ul>
+<li><a href="#perspective">System Monitoring perspective</a></li>
+<li><a href="#monitors">Monitors view</a></li>
+<li><a href="#system">System view</a></li>
+<li><a href="#jobs">Active/Inactive Jobs viewa</a></li>
+<li><a href="#messages">Messages view</a></li>
+<li><a href="#console">Console view</a></li>
+</ul>
+
+<h3 id="perspective">System Monitoring Perspective</h3>
+
+<p>
+PTP provides the <b>System Monitoring</b> perspective for job and system monitoring.  To open the System Monitoring perspective,
+select <b>Window &gt; Open Perspective &gt; Other ...</b> and choose <b>System Monitoring</b> from the list.</p>
+
+<p>The System Monitoring perspective is divided
+into four main areas. On the left side, from top to bottom are the <b><a href="#monitors">Monitors</a></b> view, the <b><a href="#jobs">Active/Inactive Jobs</a></b> views, and the 
+<b><a href="#messages">Messages</a></b> and <b><a href="#console">Console</a></b> views. Taking up the entire right side is the <b><a href="#system">System</a></b> view. 
+The contents of each view depend on 
+the monitor that is currently selected in the Monitors view. 
+
+<p><img src="images/05sysMonPersp.png"></p>
+
+<h2 id="monitors">Monitors View</h2>
+<p>The Monitors view shows all systems that are configured for monitoring, and whether monitoring is currently active or not. The Monitors view
+has three columns: a Status column that displays an icon for each active monitor, a Connection column that shows the name of the connection used
+to connect to the remote system, and a System Type column that shows the type of system being monitored.</p>
+
+<p><img src="images/05monitorsView.png"></p>
+
+<p>Using the toolbar buttons on this view, it is possible to start and stop monitoring a system, request a manual refresh, and add and remove monitors respectively.
+It is only possible to have one monitor for each combination of connection name and system type.</p>
+
+<h3 id="system">System View</h3>
+
+The System view provides an overall view of the activity on the target remote system. The view tab will contain the name of the remote system
+(as provided by the resource manager). The layout of this view will depend on the configuration of
+the target system, but will generally consist of a number of boxes that represent aggregations of computing resources (such as racks). These boxes may in turn 
+contain other elements that represent the computing resources (such as nodes). The color of the boxes is used to indicate which jobs are running on the nodes.
+<p>
+The view currently supports two mouse actions. Hovering over an element in the view will display a tooltip box with information about that element, including
+which jobs are associated with the element. Clicking on an element will highlight all associated elements (those with the same color) in the display. This
+shows the user where a particular job is running on the system.
+
+<p><img src="images/05sysMonView1.png"></p>
+
+<h3 id="jobs">Active/Inactive Jobs Views</h3>
+
+The Active Jobs view shows a list of all the jobs that are running on the system. The exact columns displayed in the view will depend on the capabilities of
+the remote system. Each job in the table is assigned a color in the first column. This color corresponds to the colors displayed in the System Monitor view.
+Clicking on a row in the table will highlight the row and also the location of the jobs in the System Monitor view.
+<p><img src="images/05activeJobs1.png"></p>
+<p>
+Job actions are available by right-clicking on a job in the view. The actions available will depend on the type of job, its state, and the job owner.
+<p><img src="images/05activeJobs3.png"></p>
+<p>
+Rows in the table can be sorted by clicking on the column heading. This will cycle though a sort sequence of "ascending", "descending", and none.
+Columns can also be removed from the view by right-clicking on the column heading and unselecting the column name.
+<p><img src="images/05activeJobs2.png"></p>
+
+The Inactive Jobs view is essentially the same as the Active Jobs view, but displays jobs that are not currently running on the system. As these jobs don't
+have associated nodes in the System Monitor view, they are not assigned a color.
+<p>
+Jobs that are launched by the user will initially appear in the Inactive Jobs view with status SUBMITTED. These jobs can be controlled (e.g. canceled)
+ by right clicking on the job and selecting an available action. <b>Refresh Job Status</b> can be used to get an immediate update of the job status rather
+ than waiting for the next update.
+<p><img src="images/05inactiveJobs1.png"></p>
+<p>
+Once a job has finished executing, it will appear in this view with status COMPLETED. The stdout and stderr from the job can be displayed in
+the <a href="#output">Console view</a> by right clicking on the job and
+selecting the appropriate action. Completed jobs will remain in the view between Eclipse sessions, so you can leave Eclipse and return at a later time without
+losing information about the jobs. If you wish to remove the job from the view (permanently), use the <b>Remove Job Entry</b> action.
+<p><img src="images/05inactiveJobs2.png"></p>
+
+
+<h2 id="output">Console View</h2>
+Depending on the functionality of the resource manager, PTP can also display standard output and standard error from the parallel program in the
+Console view. As mentioned above, output from batch jobs is only available once the job is completed. However, output from interactive jobs
+is generally displayed immediately in the console view (depending on settings in the launch configuration).</p>
+
+
+<p><img src="images/05ptpRuntimeConsoleView.png"></p>
+
+
+<p><a href="#top">Back to Top</a> | <a href="toc.html">Back to Table of Contents</a>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

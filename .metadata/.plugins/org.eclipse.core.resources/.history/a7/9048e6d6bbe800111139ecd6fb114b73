@@ -1,0 +1,90 @@
+package org.eclipse.ptp.gig.views;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServerTreeItem {
+
+	private final List<ServerTreeItem> children = new ArrayList<ServerTreeItem>();
+	private final ServerTreeItem parent;
+	private final String name;
+	private final boolean isFolder;
+
+	public ServerTreeItem(String name) {
+		this.name = name;
+		this.parent = null;
+		this.isFolder = true;
+	}
+
+	public ServerTreeItem(String name, ServerTreeItem parent, boolean isFolder) {
+		this.name = name;
+		this.parent = parent;
+		parent.add(this);
+		this.isFolder = isFolder;
+	}
+
+	private void add(ServerTreeItem serverTreeItem) {
+		children.add(serverTreeItem);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ServerTreeItem) {
+			final ServerTreeItem item = (ServerTreeItem) o;
+			if (this.parent == null) {
+				if (item.parent == null) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				if (item.parent == null) {
+					return false;
+				}
+				else {
+					return this.name.equals(item.name) && this.parent.equals(item.parent);
+				}
+			}
+		}
+		return false;
+	}
+
+	public Object[] getChildren() {
+		return children.toArray();
+	}
+
+	/*
+	 * returns the relative path of this
+	 */
+	public String getFullName() {
+		if (parent.parent == null) {
+			return name;
+		}
+		// we want the linux file separator, since this is the one that the server will use
+		return parent.getFullName() + '/' + name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public ServerTreeItem getParent() {
+		return parent;
+	}
+
+	public boolean hasChildren() {
+		return children.size() > 0;
+	}
+
+	public boolean isFolder() {
+		return isFolder;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+}

@@ -1,0 +1,6 @@
+$ cat .gitignore
+
+#ignore svn and class
+.svn
+*.class
+bin

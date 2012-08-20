@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 2 elements from project &apos;org.eclipse.ptp.gig.feature&apos;&#x0A;- Original project: &apos;org.eclipse.ptp.gig.feature&apos;&#x0A;- Original elements:&#x0A;     epl-v10.html&#x0A;     license.html" description="Delete elements" element1="epl-v10.html" element2="license.html" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="2" stamp="1345432541755" subPackages="false" version="1.0"/>
+</session>

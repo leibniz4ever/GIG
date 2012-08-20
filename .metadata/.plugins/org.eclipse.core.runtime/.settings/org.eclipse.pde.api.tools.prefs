@@ -1,0 +1,16 @@
+ILLEGAL_EXTEND=Warning
+ILLEGAL_IMPLEMENT=Warning
+ILLEGAL_INSTANTIATE=Warning
+ILLEGAL_OVERRIDE=Warning
+ILLEGAL_REFERENCE=Warning
+INVALID_JAVADOC_TAG=Warning
+INVALID_REFERENCE_IN_SYSTEM_LIBRARIES=Warning
+LEAK_EXTEND=Warning
+LEAK_FIELD_DECL=Warning
+LEAK_IMPLEMENT=Warning
+LEAK_METHOD_PARAM=Warning
+LEAK_METHOD_RETURN_TYPE=Warning
+MISSING_EE_DESCRIPTIONS=Warning
+default_api_profile=PTP-Master-Juno
+eclipse.preferences.version=1
+knownEEFragments=org.eclipse.pde.api.tools.ee.cdcfoundation10;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.cdcfoundation11;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.j2se13;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.j2se14;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.j2se15;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.javase16;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.javase17;1.0.100.v20120530-1420;org.eclipse.pde.api.tools.ee.jre11;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.osgiminimum10;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.osgiminimum11;1.0.200.v20120530-1420;org.eclipse.pde.api.tools.ee.osgiminimum12;1.0.200.v20120530-1420;

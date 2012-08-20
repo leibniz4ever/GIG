@@ -1,0 +1,5 @@
+package org.eclipse.ptp.gig.util;
+
+public class ProjectNotFoundException extends Exception {
+
+}

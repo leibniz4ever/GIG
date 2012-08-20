@@ -1,0 +1,270 @@
+package org.eclipse.ptp.gig;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.preferences.GIGPreferencePage;
+import org.eclipse.ptp.gig.views.GIGView;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+/*
+ * Contains most of the logical code of the plug-in
+ */
+public class GIGUtilities {
+
+	public enum JobState {
+		None,
+		Running,
+		Canceled
+	}
+
+	private static Job job;
+	private static Lock jobsLock = new ReentrantLock();
+	private static volatile JobState jobState = JobState.None;
+
+	public static JobState getJobState() {
+		return jobState;
+	}
+
+	public static synchronized void setJobState(JobState newState) {
+		jobState = newState;
+	}
+
+	/*
+	 * This will process the source, binary or log file passed to it
+	 */
+	public static void processSource(IPath filePath) throws IOException, CoreException, InterruptedException {
+		// enforce that the file is of the right type
+		// also see if binary or log file instead
+		String fileExtension = filePath.getFileExtension();
+		if (fileExtension.equals("gig")) { //$NON-NLS-1$
+			processBinary(filePath);
+			return;
+		}
+		else if (fileExtension.equals("log")) { //$NON-NLS-1$
+			processLog(filePath);
+			return;
+		}
+		else if (!fileExtension.equals("cu") && !fileExtension.equals("C") && !fileExtension.equals("c")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// TODO indicate an error
+			return;
+		}
+
+		// make the gig directory which will hold all relevant files
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		IProject project = workspaceRoot.getFile(filePath).getProject();
+		IFolder gigFolder = project.getFolder("gig"); //$NON-NLS-1$
+		if (!gigFolder.exists()) {
+			// TODO fix null
+			gigFolder.create(true, true, null);
+		}
+
+		// now prepare the executable path
+		IPath folderPath = gigFolder.getFullPath();
+		int segments = filePath.segmentCount();
+		IPath filename = filePath.removeFirstSegments(segments - 1).removeFileExtension();
+		filename = folderPath.append(filename);
+		IPath exec = filename.addFileExtension("gig"); //$NON-NLS-1$
+		filename = filename.addFileExtension("C"); //$NON-NLS-1$
+
+		/*
+		 * copy the file over to the gig folder so that gklee can work entirely in that directory, also gklee requires *.c format
+		 * files
+		 */
+		IFile origFile = (IFile) workspaceRoot.findMember(filePath);
+		IResource resource = workspaceRoot.findMember(filename);
+		if (resource != null && resource.exists()) {
+			// TODO fix null
+			resource.delete(true, null);
+		}
+		// TODO fix null's
+		origFile.copy(filename, true, null);
+		workspaceRoot.findMember(folderPath).refreshLocal(1, null);
+
+		// begin building the command line with absolute (not relative paths), expecially from the preferenceStore
+		String sourceOSPath, binaryOSPath;
+		IPath sourceAbsoluteIPath = workspaceRoot.findMember(filename).getLocation();
+		sourceOSPath = sourceAbsoluteIPath.toOSString();
+		binaryOSPath = sourceAbsoluteIPath.removeFileExtension().addFileExtension("gig").toOSString(); //$NON-NLS-1$
+		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		String kleeOSPath = preferenceStore.getString(GIGPreferencePage.BIN) + "/klee-l++"; //$NON-NLS-1$
+		ProcessBuilder processBuilder = new ProcessBuilder(kleeOSPath, sourceOSPath, "-o", binaryOSPath); //$NON-NLS-1$
+
+		// klee depends on a lot of path variables, so set these in the environment
+		Map<String, String> environment = processBuilder.environment();
+		buildEnvPath(environment);
+
+		// TODO have the output go to console (GIG Console?)
+		Process process = processBuilder.start();
+		process.waitFor();
+		BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		Scanner scan = new Scanner(br);
+		while (scan.hasNextLine()) {
+			String line = scan.nextLine();
+			System.out.println(line);
+		}
+		if (process.exitValue() != 0) {
+			processExitOnValue(process.exitValue());
+			return;
+		}
+
+		// refresh environment so that eclipse is aware of the new binary
+		// TODO fix null
+		gigFolder.refreshLocal(1, null);
+
+		processBinary(exec);
+	}
+
+	/*
+	 * Builds the paths needed to run klee and gklee based on values from the Preferences
+	 */
+	private static void buildEnvPath(Map<String, String> env) {
+		IPreferenceStore pstore = GIGPlugin.getDefault().getPreferenceStore();
+		env.put(GIGPreferencePage.GKLEE_HOME, pstore.getString(GIGPreferencePage.GKLEE_HOME));
+		env.put(GIGPreferencePage.FLA_KLEE_HOME_DIR, pstore.getString(GIGPreferencePage.FLA_KLEE_HOME_DIR));
+		StringBuilder sBuilder = new StringBuilder(env.get("PATH") + ':'); //$NON-NLS-1$
+		sBuilder.append(pstore.getString(GIGPreferencePage.GKLEE_DEBUG_PLUS_ASSERTS_BIN) + ':');
+		sBuilder.append(pstore.getString(GIGPreferencePage.LLVM_DEBUG_PLUS_ASSERTS_BIN) + ':');
+		sBuilder.append(pstore.getString(GIGPreferencePage.LLVM_GCC_LINUX_BIN) + ':');
+		sBuilder.append(pstore.getString(GIGPreferencePage.BIN) + ':');
+		sBuilder.append(pstore.getString(GIGPreferencePage.ADDITIONAL_PATH));
+		String path = sBuilder.toString();
+		env.put("PATH", path); //$NON-NLS-1$
+	}
+
+	/*
+	 * Processes the binary created by klee
+	 */
+	private static void processBinary(IPath binaryPath) throws IOException, CoreException, InterruptedException {
+		// setup the log file path
+		IPath logPath = binaryPath.removeFileExtension().addFileExtension("log"); //$NON-NLS-1$
+
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		String binaryOSPath = workspaceRoot.getFile(binaryPath).getLocation().toOSString();
+		IPreferenceStore preferenceStore = GIGPlugin.getDefault().getPreferenceStore();
+		String gkleeOSPath = preferenceStore.getString(GIGPreferencePage.BIN) + "/gklee"; //$NON-NLS-1$
+		ProcessBuilder processBuilder = new ProcessBuilder(gkleeOSPath, binaryOSPath);
+		buildEnvPath(processBuilder.environment());
+
+		Process process = processBuilder.start();
+		process.waitFor();
+		if (process.exitValue() != 0) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			Scanner scan = new Scanner(br);
+			while (scan.hasNextLine()) {
+				String line = scan.nextLine();
+				System.out.println(line);
+			}
+			processExitOnValue(process.exitValue());
+			return;
+		}
+		InputStream is = process.getInputStream();
+		IFile logFile = workspaceRoot.getFile(logPath);
+		if (logFile.exists()) {
+			// TODO fix null
+			logFile.setContents(is, true, false, null);
+		}
+		else {
+			// TODO fix null
+			logFile.create(is, true, null);
+		}
+		is.close();
+
+		// refresh eclipse environment to make it aware of the new log file
+		IProject project = workspaceRoot.getFile(binaryPath).getProject();
+		IFolder gigFolder = project.getFolder("gig"); //$NON-NLS-1$
+		// TODO fix null
+		gigFolder.refreshLocal(1, null);
+
+		processLog(logPath);
+	}
+
+	private static void processExitOnValue(int exitValue) {
+		// TODO Auto-generated method stub
+		// print some sort of error to console/dialog
+	}
+
+	/*
+	 * Processes a log file generated by gklee
+	 */
+	private static void processLog(IPath logPath) throws IOException, CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot workspaceRoot = workspace.getRoot();
+		IFile logFile = workspaceRoot.getFile(logPath);
+		InputStream logInputStream = logFile.getContents();
+		try {
+			GkleeLog gkleeLog = new GkleeLog(logInputStream);
+			GIGView.getDefault().update(gkleeLog);
+		} catch (IllegalStateException e) {
+			StatusManager.getManager().handle(
+					new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.PARSE_EXCEPTION, e));
+		}
+	}
+
+	public static void startJob(Job job) {
+		jobsLock.lock();
+		try {
+			if (jobState == JobState.None) {
+				GIGUtilities.job = job;
+				job.setPriority(Job.LONG);
+				job.schedule();
+				setJobState(JobState.Running);
+			}
+		} finally {
+			jobsLock.unlock();
+		}
+	}
+
+	/*
+	 * Used to correctly stop the job midway through for both canceling and exiting purposes
+	 */
+	public static void stopJob() {
+		jobsLock.lock();
+		try {
+			if (jobState == JobState.Running) {
+				setJobState(JobState.Canceled);
+				int i = 1000;
+				/*
+				 * We are waiting and giving the job time to cleanly exit itself, it will signal us by changing the jobState to
+				 * None.
+				 * Or we wait for timeout and kill it with a cancel
+				 */
+				while (jobState == JobState.Canceled && i > 0) {
+					try {
+						Thread.sleep(1);
+						i--;
+					} catch (InterruptedException e) {
+						StatusManager.getManager().handle(
+								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.INTERRUPTED_EXCEPTION, e));
+					}
+				}
+				job.cancel();
+				job = null;
+				setJobState(JobState.None);
+			}
+		} finally {
+			jobsLock.unlock();
+		}
+	}
+}

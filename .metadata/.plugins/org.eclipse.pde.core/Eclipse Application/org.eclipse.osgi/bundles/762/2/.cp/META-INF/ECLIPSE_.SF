@@ -1,0 +1,501 @@
+Signature-Version: 1.0
+SHA1-Digest-Manifest: NVtYJhv5DuxU5HAW1Z8XENesvPA=
+Created-By: 1.6.0 (IBM Corporation)
+SHA1-Digest-Manifest-Main-Attributes: 7PDI8Dq4giU8zSNohutE5xkzdZI=
+
+Name: html/00newNoteworthy.html
+SHA1-Digest: oGOKUsyHDe3U1cINF52gyg2IJKE=
+
+Name: html/06parDebugging.html
+SHA1-Digest: 8WIC6oKiXWUctOL48DIuJj5X1NE=
+
+Name: html/images/06parallelDebugViewSets.png
+SHA1-Digest: ZCXtxhRFkLqo5ZHGt926P/Bg40Q=
+
+Name: html/00prereqs.html
+SHA1-Digest: eqr+Wsiy1vOo1xHZywVLqzN2L4s=
+
+Name: html/images/02-RM-OpenMPI-Configuration.png
+SHA1-Digest: X6JoLCsnXAsUZCvDjzTm1mYVuRI=
+
+Name: html/images/02GenericRemLaunch01.png
+SHA1-Digest: 5zz5umJ0GaqqEwTrE3UarjMW+eI=
+
+Name: html/images/02GenericRemLaunch03.png
+SHA1-Digest: Cvx8OptDcNhf4IeORE+q09sVuFI=
+
+Name: html/images/06pSetRemove.png
+SHA1-Digest: FwnDJTjEeHvs4NPw61Kmb69/I9M=
+
+Name: html/images/06ipMult.png
+SHA1-Digest: N0MAZx5n/nZRuZkbSTAZM9e4mVs=
+
+Name: html/images/rm-new-project-provider.png
+SHA1-Digest: lLLHViElQpD4RnNCxRo49QNOrJE=
+
+Name: html/images/01wbSrcEditor.png
+SHA1-Digest: YPobmQt7aXVx5LOEnM+nRPWotrk=
+
+Name: html/images/02resMgrRunning.png
+SHA1-Digest: 3vv2sVgSLiz5L9aZmtYTb5Gissk=
+
+Name: html/images/01mpiProjSettings.png
+SHA1-Digest: ddpteh478JHVsRpbW75tSXdUerc=
+
+Name: html/images/05ptpLegendJobProcess.png
+SHA1-Digest: gQaodDRyCmM0WiXBmb9xLWWYBxk=
+
+Name: html/images/02newRemoteHost.png
+SHA1-Digest: kk2vE4Vjc3EYEKMCnx12ZZ1cchA=
+
+Name: html/images/05inactiveJobs2.png
+SHA1-Digest: PiPVqzisERChxOinvyTpz/0RXoI=
+
+Name: html/03pRunConfig.html
+SHA1-Digest: Xq2np6LoiaCZRFo0PrYw0M+fU1Q=
+
+Name: html/images/05ptpRuntimeJobsViewHover.png
+SHA1-Digest: fIGETfY7gCvBmVHLXusqfog95iU=
+
+Name: html/images/07prefsDebugSDM.png
+SHA1-Digest: QwS1i5om0G32xUA8+llNnT2LvCI=
+
+Name: intro/css/graphics/ptp_logo_intro.png
+SHA1-Digest: TL9q7hN15sd6PDqdsmySF/dH54A=
+
+Name: html/images/sync-mergeConflictResolve.png
+SHA1-Digest: EzN1d6xn+PpZdAlkmrSWN0xgzag=
+
+Name: html/images/02-RM-OpenMPI-View-Remove.png
+SHA1-Digest: t64ttihxksCyqXlh7zcaMDFsZS0=
+
+Name: html/images/02-RM-OpenMPI-Connection-Remote1.png
+SHA1-Digest: pUGjuD5yTI1MdOPiyhP87I9yjtM=
+
+Name: html/images/06pSets.png
+SHA1-Digest: HNXO/USv8+bzOpwJpdyVewrjnBE=
+
+Name: html/images/06terminate.png
+SHA1-Digest: nwTaiABdERXUJaVUHjml1KrPf4g=
+
+Name: intro/ptpWhatsnew.xml
+SHA1-Digest: 6OirHC1hdBohRo2mO/UWxWXFn3Y=
+
+Name: html/images/07prefsAll.png
+SHA1-Digest: pYWgWLvS2YOcgs4ZQLa2anbCZf0=
+
+Name: html/images/06launchConfig.png
+SHA1-Digest: JdZlLJhVy9lVmMiJq4GtGz+Q3L0=
+
+Name: html/07ptpPrefs.html
+SHA1-Digest: 3v5tmpFo2peHofjka+N66GJfVEM=
+
+Name: html/images/06parallelDebugViewCmds.png
+SHA1-Digest: EreKLxiqbZSp9tTNmXatBjmiUZw=
+
+Name: html/images/06ipReg.png
+SHA1-Digest: 5MzJjcXVPdeATLVuOVq88f0YpbM=
+
+Name: html/images/03combinedConsole1.png
+SHA1-Digest: 3kuWaI4/rrhtUHItd6x9UJrRkaE=
+
+Name: html/images/06setBreakpoint.png
+SHA1-Digest: AHQao0kzZbraewDXq7l9oGl2gQ4=
+
+Name: html/images/06pSetChange.png
+SHA1-Digest: hFDhtVe+bqnHQ8LXUEASs4vrywU=
+
+Name: html/images/06pSetChooseIcon.png
+SHA1-Digest: ySHAeGUW7wtktjNaIkhrMdzr+kk=
+
+Name: html/images/modules-notDetected.png
+SHA1-Digest: 4npxK2PuLmkNEnoG9R9Pjj3OHn4=
+
+Name: html/images/05runtimeResMgrView.png
+SHA1-Digest: kRvdlWxU/kEFPRc7uVgmXU2g7NE=
+
+Name: html/images/03launchResTab.png
+SHA1-Digest: Rgv/E4aH+jyPQYDID41Y6lXOiJ8=
+
+Name: html/images/01projBasicSettings.png
+SHA1-Digest: 4vjvNaDex0lNOUGhDWwLQ40lHt4=
+
+Name: html/images/03resources_configs.png
+SHA1-Digest: iugMhEL4r2JmPQmOXcBnpii2TKM=
+
+Name: html/images/05ptpLegend.png
+SHA1-Digest: Ra5Gj4zh/mwx6VJT5x3CciYEsJI=
+
+Name: META-INF/maven/org.eclipse.ptp/org.eclipse.ptp.doc.user/pom.prop
+ erties
+SHA1-Digest: 7FB8J+xydljO52w4QOPCJLlR62Y=
+
+Name: html/images/07prefsViewer.png
+SHA1-Digest: m6B9++ckdNV4muPMfYT07K3zloU=
+
+Name: html/images/03launch2.png
+SHA1-Digest: b2xenQb2GZ6NMmPfWRFDo1JweF8=
+
+Name: html/images/02-RM-OpenMPI-Connection-Remote.png
+SHA1-Digest: n0lbtK0RXgfcki05Acoyh7m60po=
+
+Name: html/thumb.js
+SHA1-Digest: opcdnFESlzq8eVfT5iJAhuStY3Y=
+
+Name: html/images/03launch4.png
+SHA1-Digest: WsFh81+x8AJw81L+6O2F8uX0AtY=
+
+Name: html/images/02resMgrListOrteLocal.png
+SHA1-Digest: pcVMBDP1chE323APosR1c9OFySQ=
+
+Name: html/images/06globalBreakpoint.png
+SHA1-Digest: AxoVOsJOhxEFCfo9h2PNujSqTpI=
+
+Name: html/images/03launch6.png
+SHA1-Digest: O6jRB0EkbWDV8DvqjEJqmsXzETQ=
+
+Name: html/images/03launch8.png
+SHA1-Digest: UrLj2iUV/CNzGwGaDsmj4zOEeYU=
+
+Name: html/images/07prefsExternal3.png
+SHA1-Digest: Bi5LepdPtfy4hDhGZppbcwIKAfw=
+
+Name: intro/css/sample.css
+SHA1-Digest: M/CPZJ0VFPHicuQXb7cct6oIf2M=
+
+Name: html/images/02RuntimePerspEmpty.png
+SHA1-Digest: o+P2/vBP4ZqqzT7/ACzEbwJjIFM=
+
+Name: html/images/05ptpRuntimeConsoleView.png
+SHA1-Digest: f+azaCOC3qNjqwof0iUA4Lh8Muw=
+
+Name: html/images/06terminateAll.png
+SHA1-Digest: CDJ7yCqi3WhXRjIXet/RnvlehTU=
+
+Name: html/images/sync-newprojConnection.png
+SHA1-Digest: m3C70+29+rlYl98kIACUsOgob4o=
+
+Name: html/images/05activeJobs1.png
+SHA1-Digest: dP8gX5Wz7L3hoIXRDVlWE1uPLig=
+
+Name: html/images/07prefsDebug.png
+SHA1-Digest: CV1Zeb0E69geyku3vzxh6qc8cck=
+
+Name: html/images/ptp_logo_intro.png
+SHA1-Digest: N5IAoRXAjZVwOdTImO4ulCQPUC8=
+
+Name: html/images/modules-checklist-cropped.png
+SHA1-Digest: p5v999Z0q2MatuIVFB5m9eI/ZyM=
+
+Name: html/images/05activeJobs3.png
+SHA1-Digest: xdHuay7w1UWDuS747vrZ6mGnUec=
+
+Name: html/images/07prefsServiceConfig.png
+SHA1-Digest: 12rcFUsq5T4OVu8x9SIsEwbH/iQ=
+
+Name: html/images/05runtimePerspAnn.png
+SHA1-Digest: JG9JtjBkofcLyc2Dtg2Q8fhaAO4=
+
+Name: html/images/02rmServiceConfig.png
+SHA1-Digest: 4pK4b0mj3E0xiBd4ajexXw1eLjs=
+
+Name: html/images/02-RM-OpenMPI-View-Machines.png
+SHA1-Digest: 3GqcMxtTM9D8DtaBt0+lari1NmE=
+
+Name: html/images/05ptpLegendMachines.png
+SHA1-Digest: zNji224c1WTwwkOyvXlRWhqn54g=
+
+Name: html/images/sync-projProperties.png
+SHA1-Digest: yV3/cLQwsrGzM8duvyOqSg9TPkA=
+
+Name: about.html
+SHA1-Digest: p0ZoXj4UARV1NmAKuIc3VZcM6Xo=
+
+Name: html/images/06bkptSetContext.png
+SHA1-Digest: 5Ah21BaPvH7OQx6Wpxj3eOJdfWU=
+
+Name: html/images/03runMenu.png
+SHA1-Digest: TvSXz+zs89vYB/spZAASeOnaY9I=
+
+Name: toc.xml
+SHA1-Digest: +2JJXiKmr8i9nmtvMXdXiAdo/M4=
+
+Name: html/images/05monitorsView.png
+SHA1-Digest: WKpx/vlFbE+SRosR7/k+tfgt8eU=
+
+Name: html/images/06reg1.png
+SHA1-Digest: cSepH0FhysXc6eDYLSdLM6zx5VU=
+
+Name: html/toc.html
+SHA1-Digest: vpCiuyUUKwiuIKJjPE4Ml5mcPr8=
+
+Name: html/images/sync-newprojCreate.png
+SHA1-Digest: rcOPqCV3SqNWqnI2tFO5qzgb6ys=
+
+Name: html/images/06ipUnreg.png
+SHA1-Digest: T4v4BC8WlqgyaBBon43JMMxWjd0=
+
+Name: html/images/02-RM-OpenMPI-View-List.png
+SHA1-Digest: HTb3shzBEt9CeqrbSNAA7rY+Pq0=
+
+Name: html/images/06selectProcessSetCreateAdd.png
+SHA1-Digest: 7ny/K6UuvE2PliYe1pvHsHaVTdk=
+
+Name: html/images/06createProcessSetIcon.png
+SHA1-Digest: F6Mk99zoq0H2gApI83JrzxFkOzg=
+
+Name: html/images/06selectProcessSetCreate.png
+SHA1-Digest: qOBYG9Yto0+T88caUXty8sdvpBc=
+
+Name: html/images/06pSetSelect.png
+SHA1-Digest: x+PJOiBXk4WgS79AEW1t+FpjnBw=
+
+Name: html/images/02GenericRemLaunch02.png
+SHA1-Digest: k1WsUTLg8jT1GBSEigJeslRiP/g=
+
+Name: html/05monitoring.html
+SHA1-Digest: LGA5sBWHIavjtteNBAVrWLHCDWs=
+
+Name: html/images/02GenericRemLaunch04.png
+SHA1-Digest: a4N+qerrsoZu7FQ0neLvsxGyCRw=
+
+Name: html/images/modules-notConnected.png
+SHA1-Digest: ZZw5mHeRWZNvqb/1V8JXOa8SiI8=
+
+Name: html/images/sync-contextMenu.png
+SHA1-Digest: MUIidI8ykO7y8RkPJQ78ycudI/U=
+
+Name: intro/ptpOverview.xml
+SHA1-Digest: prDyQtjDKD6Rk7NWvrMU/AoUShM=
+
+Name: html/images/06bkptsViewMenu.png
+SHA1-Digest: Ou+D8fvANpGFw9ujVclrPuDxKmM=
+
+Name: html/images/06bkptsView.png
+SHA1-Digest: +OjtLm8Ts6rxZ4BDl3HccEFi0F0=
+
+Name: html/localVsRemote.html
+SHA1-Digest: sNrySU30SJvgHH9NpLhKZVtt/qo=
+
+Name: html/images/05sysMonView1.png
+SHA1-Digest: DJ2rxKWpNpz+dAFIggyHyOzn9No=
+
+Name: html/images/02resMgrEdit.png
+SHA1-Digest: dQ5yz8K+E+HALliFvrL78Xe0HKk=
+
+Name: html/images/05ptpRuntimeProcessDetails.png
+SHA1-Digest: q33dQ81MZzxNfAdp3aM1xYWLLvU=
+
+Name: html/images/05inactiveJobs1.png
+SHA1-Digest: zO/1+wsBpETNPETHzU3NBaKqn/c=
+
+Name: html/images/03launch1a.png
+SHA1-Digest: TAVo7FlSfh4VDmWFJa9xDXSinpM=
+
+Name: html/images/02ChooseResMgrNameAndDesc.png
+SHA1-Digest: 0pUiWTsZxkso1OI8NJC59PkBWPo=
+
+Name: html/modules.html
+SHA1-Digest: PlgCUyLNlEsXwAc4rujbZ5vXwHo=
+
+Name: html/images/01newMPIproject.png
+SHA1-Digest: b1n2zX3GVEw7By0Ntwn+BvF/9XY=
+
+Name: html/images/02ChangeResMgrStartup.png
+SHA1-Digest: xyaG08/nkElv3UkN5jnQbCEZnJU=
+
+Name: html/00overview.html
+SHA1-Digest: yXn01jKW/knP43/+MppJ1+qMtTw=
+
+Name: html/images/05sysMonPersp.png
+SHA1-Digest: S1NqQDcqB4Hq5Hy9v5C8mzU0cdQ=
+
+Name: html/images/02addResMgr.png
+SHA1-Digest: mByJKUESwqG2Ga5sLpRZNol2u2Q=
+
+Name: html/images/02-RM-OpenMPI-View-Start.png
+SHA1-Digest: LjKSCQWI00KhjUFXoyRxR16Nh7Q=
+
+Name: html/images/02-RM-OpenMPI-Connection-Remote0.png
+SHA1-Digest: 8qdrqC7C0ININyUTpQHrHhHlIsU=
+
+Name: html/01buildMPIprog.html
+SHA1-Digest: 9TiJSM1uYsFj4E60NhBUuir1p8A=
+
+Name: html/images/02remoteBrowseProxy.png
+SHA1-Digest: 9L+udukcVE0Rj9Q4FZG91cuieIk=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: QdryQvJlVywlE0MGLuwYCkmkyWk=
+
+Name: html/images/sync-newprojConnect.png
+SHA1-Digest: RPRP1c/OQgLsocTVVgmuhMzKLJc=
+
+Name: html/images/toc_parallel_perspective_lg.png
+SHA1-Digest: jexIRGQyt+O4z6MkqqKf32/fWhQ=
+
+Name: META-INF/maven/org.eclipse.ptp/org.eclipse.ptp.doc.user/pom.xml
+SHA1-Digest: axqpyQqtFADRDSMJ1V7YbqZkHN0=
+
+Name: intro/css/graphics/ptp_logo_intro_hov.png
+SHA1-Digest: k+75OeSVbMquMPJI6UyO703NkLM=
+
+Name: html/images/01proj.png
+SHA1-Digest: FceKAXAChLvkxusi6QnJSuqFP5A=
+
+Name: html/images/errorParsersProperties.png
+SHA1-Digest: iQ95mnPB4N1DJmdyivKmjfMIvGI=
+
+Name: html/images/06pSetDelete.png
+SHA1-Digest: TpHnZEJvX633VcPA7mGWxpnXVgU=
+
+Name: html/images/errorParsersCrayLoopmark.png
+SHA1-Digest: UC3f559fbTlaav+qayq2P7gCdoY=
+
+Name: html/images/modules-list.png
+SHA1-Digest: CxGoUFbXTtG9ar78fyW/hWE4eu8=
+
+Name: html/images/sync-selectConversionWizard.png
+SHA1-Digest: o0y+jmVhpjGXQUZTWaOHDS8GVto=
+
+Name: html/images/03runMenu2.png
+SHA1-Digest: PCiuuPWo5XJNYJKP7sR/f8S43e8=
+
+Name: html/sync.html
+SHA1-Digest: /afVX9JwrdZd9mwe8XQ4o/UdMFQ=
+
+Name: html/help.css
+SHA1-Digest: 8xZoR8pi0638UUZbrK5q22g6TUI=
+
+Name: html/images/05runtimeNodeDetails.png
+SHA1-Digest: bd+2Rj8xpKh0la0oo5L6SCVCOUc=
+
+Name: html/images/sync-newprojConfig.png
+SHA1-Digest: zLw1Kdf+q8J3/eVyz+RUD7CHRzw=
+
+Name: html/images/02-RM-OpenMPI-View-Running.png
+SHA1-Digest: MQ1rdsyCPulqjlU8xAbThwOCACs=
+
+Name: html/images/sync-fileExcludeIncludeList.png
+SHA1-Digest: xkCtrI69k6x+0uXQ0whe9F/2iFs=
+
+Name: html/images/03launch1.png
+SHA1-Digest: yhTB/Dgqvx3dHpH1lzjnu3uK/5w=
+
+Name: html/images/03launch3.png
+SHA1-Digest: 4a+49J1ax033HL9GVBhDbUtLHF0=
+
+Name: html/images/03launch5.png
+SHA1-Digest: CYRUS+OZRWK4mZ/G3tqte4TdLl0=
+
+Name: html/images/03launch7.png
+SHA1-Digest: aPZky4bXAHq/uGyTB7Na3JA/ZNU=
+
+Name: html/images/03launch9.png
+SHA1-Digest: qdArPn+O3cgPvmr4BB3oFn0oe1g=
+
+Name: html/images/02resMgrRemove.png
+SHA1-Digest: XReX08qYJw2kywRBt1ywjX+hR2w=
+
+Name: html/images/07prefsRM.png
+SHA1-Digest: XMq4ef+TRRBstXymLgctrjpRepQ=
+
+Name: html/images/07prefsExternal2.png
+SHA1-Digest: TKqZzqKrLXYUkKYu0eqKfFbbGdw=
+
+Name: plugin.properties
+SHA1-Digest: KVjWssAcUs/renOXmcimxDCmuvk=
+
+Name: html/images/06mip.png
+SHA1-Digest: lxSB0OQq3DyQp+qQVBq+sS06144=
+
+Name: html/images/06bkptsViewByProcessSet.png
+SHA1-Digest: avu8J/gqUesm4p1Jv4YtL2ICPcY=
+
+Name: html/images/05parallel_perspective.png
+SHA1-Digest: Xl35y1fRubcbwgPqjXUbLMOlwY8=
+
+Name: html/images/06debugAdvanced.png
+SHA1-Digest: ZTajIxYlDLZ+rLKi98QIg059M3I=
+
+Name: html/rms/openMPI.html
+SHA1-Digest: O4E32uiTfywP8Fzm8NJl1xF0TYM=
+
+Name: html/images/sync-newproj.png
+SHA1-Digest: YKsmGDFAJz+k024Ze/TS/2Fdp28=
+
+Name: html/images/05activeJobs2.png
+SHA1-Digest: bgVshqKXBTzwc8440VAsVMcipdk=
+
+Name: html/images/05ptpRuntimeJobsView.png
+SHA1-Digest: 7OItYbc052kl0ToAk5PKuzRYcjo=
+
+Name: html/images/sync-conversionWizard.png
+SHA1-Digest: S0j17bGWnIzTLc/YyddVqDa1Mhg=
+
+Name: plugin.xml
+SHA1-Digest: e6uO8Z9mgk5YqWaKCQTry21rx2U=
+
+Name: html/images/sync-project-provider.png
+SHA1-Digest: rT21PyqJIagxnorsNCK8IXYk8Fw=
+
+Name: html/images/modules-detecting.png
+SHA1-Digest: C6tt5HgfQI/mdprLtkYlTh31Sn4=
+
+Name: html/images/02-RM-OpenMPI-View-Edit.png
+SHA1-Digest: XvniKGN3ydFIrgjQMqdldgJqi8U=
+
+Name: html/images/02-RM-OpenMPI-Connection-Local.png
+SHA1-Digest: 9ydLY5FBYYTFDb+xODcfRa9eJy8=
+
+Name: html/images/06downArrowSelect.png
+SHA1-Digest: Dt48UMnGt/wsyzF6Z8UJBwnRXIM=
+
+Name: html/images/06cipHover.png
+SHA1-Digest: YvtmPvV3QFIQN3z1zluEMo+axoA=
+
+Name: html/errorParsers.html
+SHA1-Digest: j/Y6xTP8P19qLJYKdxPmb8OKlwo=
+
+Name: html/images/05runtimeMachinesView.png
+SHA1-Digest: Q3TDYK7ZQegaBIXMEQ67GIL2BrI=
+
+Name: html/images/sync-newprojContext.png
+SHA1-Digest: ofH7lpKwQ6xRHSjTPKVKxe1K0yM=
+
+Name: html/images/sync-mergeConflictDialog.png
+SHA1-Digest: Ok+n11lxb4k9Zp6VjPVa5Naw1UU=
+
+Name: html/images/02resMgrStart.png
+SHA1-Digest: Vz8s3TXdiwfSDM2Uwp4IoIIuw5o=
+
+Name: html/images/modules-unchecked.png
+SHA1-Digest: GXgBFioy3nO6TIQ+s3O9XzDYtJA=
+
+Name: intro/ptpTutorial.xml
+SHA1-Digest: nbj8cSrVvCS8EQuGgzH8crDg+tM=
+
+Name: html/images/06bkptHover.png
+SHA1-Digest: 41GDkgvZMo5fz7Xw5GWyVyGraOc=
+
+Name: html/images/05ptpLegendResMgr.png
+SHA1-Digest: NavOtrwHPj/WHw9p8f5wDBxDz90=
+
+Name: html/images/06ptpDebugPersp.png
+SHA1-Digest: H6dhH0U82yfGxJP1d1d5MljAEkM=
+
+Name: html/rms/gridengine.html
+SHA1-Digest: lrtLrjSwuW2zF1eMFKuerdyn29E=
+
+Name: html/thumb2.js
+SHA1-Digest: wSetCjSQG73GAplrQBgzFh/hloE=
+
+Name: html/images/05legendIcon.png
+SHA1-Digest: 1t7LUSqcU4YJOXMo6SRY80e5W0k=
+
+Name: html/images/02chooseResMgrType.png
+SHA1-Digest: +CuJMW4q4KYScDZoW3Xej98of7k=
+
+Name: html/images/07prefsExternal.png
+SHA1-Digest: 0LzUwbm1v/4O3SCiDXMY3bY783k=
+

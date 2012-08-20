@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CommitComments>	<CommitComment>Cleaned up and formatted. Fixed a bunch of bugs. Added help pages, copyright info, license, etc.</CommitComment>
+	<CommitComment>Cleaned up a bunch, fixed a f</CommitComment>
+	<CommitComment>cleaned and documented code. JavaDocs still needs to be done, as does ptp&apos;s cleanup and format. Also need thorough debug on all platforms.</CommitComment>
+	<CommitComment>del</CommitComment>
+	<CommitComment>Cleaned and documented code. Javadocs haven&apos;t yet been done, nor the official ptp clean and format. Also needs to be thoroughly debugged.</CommitComment>
+	<CommitComment>cleaned up the update site</CommitComment>
+	<CommitComment>Fixed all of the TODO&apos;s</CommitComment>
+	<CommitComment>Latest update, this will shortly be put online.</CommitComment>
+	<CommitComment>Fixed a few problems, including a small one in the communication protocol.</CommitComment>
+	<CommitComment>Fixed a few large bugs that were introduced over weekend. Basic testing on deployed plug-in now half complete.</CommitComment>
+</CommitComments>

@@ -1,0 +1,211 @@
+package org.eclipse.ptp.gig.log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
+
+/*
+ * This organizes a list of ThreadInfo objects by block then by thread
+ */
+public class OrganizedThreadInfo {
+
+	private static int threadsPerWarp;
+	private final Map<Integer, Map<Integer, Map<Integer, List<TwoThreadInfo>>>> blocks;
+	private final List<TwoThreadInfo> tempList = new ArrayList<TwoThreadInfo>();
+
+	public OrganizedThreadInfo() {
+		blocks = new HashMap<Integer, Map<Integer, Map<Integer, List<TwoThreadInfo>>>>();
+	}
+
+	public void add(TwoThreadInfo twoThreadInfo) {
+		tempList.add(twoThreadInfo);
+	}
+
+	public static void setThreadsPerWarp(int threadsPerWarp) {
+		OrganizedThreadInfo.threadsPerWarp = threadsPerWarp;
+	}
+
+	public void organize() {
+		for (TwoThreadInfo twoThreadInfo : tempList) {
+			organize(twoThreadInfo, 0);
+			organize(twoThreadInfo, 1);
+		}
+	}
+
+	private void organize(TwoThreadInfo twoThreadInfo, int i) {
+		ThreadInfo threadInfo;
+		if (i == 0) {
+			threadInfo = twoThreadInfo.getThreadInfo0();
+		}
+		else {
+			threadInfo = twoThreadInfo.getThreadInfo1();
+		}
+		try {
+			int block = threadInfo.getBlock();
+			int thread = threadInfo.getThread();
+			int warp = thread / threadsPerWarp;
+			if (blocks.containsKey(block)) {
+				Map<Integer, Map<Integer, List<TwoThreadInfo>>> warps = blocks.get(block);
+				if (warps.containsKey(warp)) {
+					Map<Integer, List<TwoThreadInfo>> threads = warps.get(warp);
+					if (threads.containsKey(thread)) {
+						List<TwoThreadInfo> threadInfos = threads.get(thread);
+						threadInfos.add(twoThreadInfo);
+					}
+					else {
+						List<TwoThreadInfo> threadInfos = new ArrayList<TwoThreadInfo>();
+						threadInfos.add(twoThreadInfo);
+						threads.put(thread, threadInfos);
+					}
+				}
+				else {
+					Map<Integer, List<TwoThreadInfo>> threads = new HashMap<Integer, List<TwoThreadInfo>>();
+					List<TwoThreadInfo> threadInfos = new ArrayList<TwoThreadInfo>();
+					threadInfos.add(twoThreadInfo);
+					threads.put(thread, threadInfos);
+					warps.put(warp, threads);
+				}
+			}
+			else {
+				Map<Integer, Map<Integer, List<TwoThreadInfo>>> warps = new HashMap<Integer, Map<Integer, List<TwoThreadInfo>>>();
+				Map<Integer, List<TwoThreadInfo>> threads = new HashMap<Integer, List<TwoThreadInfo>>();
+				List<TwoThreadInfo> threadInfos = new ArrayList<TwoThreadInfo>();
+				threadInfos.add(twoThreadInfo);
+				threads.put(thread, threadInfos);
+				warps.put(warp, threads);
+				blocks.put(block, warps);
+			}
+		} catch (NumberFormatException nfe) {
+			/*
+			 * Just ignore this improperly formatted ThreadInfo object (not all of them are "properly" formatted after all)
+			 */
+		}
+	}
+
+	public void setupTree(Tree tree, String topLevelLabel, String emptyTopLevelLabel, String lowLevelLabel, IProject project) {
+		tree.addListener(SWT.MouseDoubleClick, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Widget widget = event.item;
+				if (widget instanceof TreeItem) {
+					TreeItem item = (TreeItem) widget;
+					Object o = item.getData();
+				}
+			}
+
+		});
+		if (blocks.size() == 0) {
+			if (emptyTopLevelLabel != null) {
+				TreeItem topLevel = new TreeItem(tree, SWT.NONE);
+				topLevel.setText(emptyTopLevelLabel);
+			}
+			else {
+				return;
+			}
+		}
+		else {
+			TreeItem topLevel = new TreeItem(tree, SWT.NONE);
+			topLevel.setText(topLevelLabel);
+
+			Set<Integer> keys = blocks.keySet();
+			int[] keysArray = new int[keys.size()];
+			Iterator<Integer> iter = keys.iterator();
+			int j;
+			for (int i = 0; i < keysArray.length; i++) {
+				j = iter.next();
+				keysArray[i] = j;
+			}
+			Arrays.sort(keysArray);
+
+			for (int block : keysArray) {
+				setupBlockTree(topLevel, blocks.get(block), block, lowLevelLabel, project);
+			}
+		}
+	}
+
+	private void setupBlockTree(TreeItem topLevel, Map<Integer, Map<Integer, List<TwoThreadInfo>>> warps, int block,
+			String lowLevelLabel, IProject project) {
+		TreeItem blockTree = new TreeItem(topLevel, SWT.NONE);
+		blockTree.setText(Messages.BLOCK + block);
+
+		Set<Integer> keys = warps.keySet();
+		int[] keysArray = new int[keys.size()];
+		Iterator<Integer> iter = keys.iterator();
+		int j;
+		for (int i = 0; i < keysArray.length; i++) {
+			j = iter.next();
+			keysArray[i] = j;
+		}
+		Arrays.sort(keysArray);
+
+		for (int warp : keysArray) {
+			setupWarpTree(blockTree, warps.get(warp), warp, lowLevelLabel, project);
+		}
+	}
+
+	private void setupWarpTree(TreeItem blockTree, Map<Integer, List<TwoThreadInfo>> threads, int warp, String lowLevelLabel,
+			IProject project) {
+		TreeItem warpTree = new TreeItem(blockTree, SWT.NONE);
+		warpTree.setText(Messages.WARP_NUMBER + warp);
+
+		Set<Integer> keys = threads.keySet();
+		int[] keysArray = new int[keys.size()];
+		Iterator<Integer> iter = keys.iterator();
+		int j;
+		for (int i = 0; i < keysArray.length; i++) {
+			j = iter.next();
+			keysArray[i] = j;
+		}
+		Arrays.sort(keysArray);
+
+		for (int thread : keysArray) {
+			setupThreadTree(warpTree, threads.get(thread), thread, lowLevelLabel, project);
+		}
+	}
+
+	private void setupThreadTree(TreeItem warpTree, List<TwoThreadInfo> list, int thread, String lowLevelLabel, IProject project) {
+		TreeItem threadTree = new TreeItem(warpTree, SWT.NONE);
+		threadTree.setText(Messages.THREAD_NUMBER + thread);
+
+		for (TwoThreadInfo twoThreadInfo : list) {
+			setupTwoThreadInfoTree(threadTree, twoThreadInfo, lowLevelLabel, project);
+		}
+	}
+
+	private void setupTwoThreadInfoTree(TreeItem threadTree, TwoThreadInfo twoThreadInfo, String lowLevelLabel, IProject project) {
+		TreeItem twoThreadTree = new TreeItem(threadTree, SWT.NONE);
+		twoThreadTree.setText(lowLevelLabel);
+
+		setupThreadInfoLeaf(twoThreadTree, twoThreadInfo.getThreadInfo0(), project);
+		setupThreadInfoLeaf(twoThreadTree, twoThreadInfo.getThreadInfo1(), project);
+		twoThreadTree.setExpanded(true);
+	}
+
+	private void setupThreadInfoLeaf(TreeItem twoThreadTree, ThreadInfo threadInfo, IProject project) {
+		try {
+			String label = threadInfo.getLabel(project);
+			TreeItem leaf = new TreeItem(twoThreadTree, SWT.NONE);
+			leaf.setText(label);
+		} catch (NumberFormatException nfe) {
+
+		}
+	}
+
+	public boolean isEmpty() {
+		return blocks.isEmpty();
+	}
+}

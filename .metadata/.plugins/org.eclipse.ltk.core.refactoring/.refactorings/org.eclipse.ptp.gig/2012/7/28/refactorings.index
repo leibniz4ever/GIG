@@ -1,0 +1,14 @@
+1341707077274	Rename type 'ThreadInfo'
+1341709355442	Encapsulate field 'warpDivergences'
+1341713908133	Rename field 'numBankInstructions'
+1341714014361	Rename field 'sharedMemory'
+1341714850514	Rename field 'bankConflictRate'
+1341714965029	Rename field 'warpBankConflictRate'
+1341891498502	Encapsulate field 'sets'
+1341891507113	Encapsulate field 'warpNumber'
+1341894177208	Encapsulate field 'type'
+1341894336091	Encapsulate field 'thread1'
+1341894340887	Encapsulate field 'thread2'
+1341895563302	Rename local variable 'listElement'
+1342039280882	Delete element
+1342039284852	Delete element

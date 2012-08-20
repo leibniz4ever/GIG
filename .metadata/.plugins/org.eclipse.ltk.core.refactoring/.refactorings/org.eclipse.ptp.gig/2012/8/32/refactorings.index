@@ -1,0 +1,28 @@
+1344372974260	Rename method 'requestVerify'
+1344373245552	Rename field 'RESET'
+1344373809292	Rename local variable 'exec'
+1344374183059	Rename local variable 'gigFolder'
+1344374591958	Rename local variable 'origFile'
+1344374607927	Rename local variable 'file'
+1344382543646	Rename local variable 'br'
+1344382807147	Rename local variable 'origFile'
+1344382812732	Rename local variable 'BinaryFile'
+1344537653850	Rename field 'fileName'
+1344538508984	Rename type 'Assertion'
+1344539197698	Move compilation units
+1344539817901	Delete elements
+1344540278418	Move compilation unit
+1344541712491	Move compilation unit
+1344545154164	Move compilation unit
+1344549243126	Rename local variable 'threadInfo'
+1344554394906	Rename field 'coalescings'
+1344555227530	Rename local variable 'i'
+1344555624691	Rename local variable 'blockTree'
+1344555732797	Rename local variable 'warpTree'
+1344556258178	Rename method 'setupThreadInfoTree'
+1344556464097	Rename local variable 'threadInfo'
+1344559699025	Rename field 'NONCOALESCED_GLOBAL_MEMORY_ACCESS'
+1344616228353	Rename local variable 'potentialDifferent'
+1344632071033	Move folder
+1344632096017	Delete element
+1344633773684	Rename field 'file'

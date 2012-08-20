@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="GIG" url="http://www.cs.utah.edu/fv/GIG">
+      Latest Builds are hosted by University of Utah&apos;s Formal Verification research group of the Computer Science Department. For stable builds, update from the Parallel Tools Platform&apos;s server.
+   </description>
+   <feature url="features/org.eclipse.ptp.gig.feature_1.0.0.201208161440.jar" id="org.eclipse.ptp.gig.feature" version="1.0.0.201208161440">
+      <category name="GIG"/>
+   </feature>
+   <category-def name="GIG" label="GIG"/>
+</site>

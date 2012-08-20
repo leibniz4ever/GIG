@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;GkleeLog.java&apos; to &apos;org.eclipse.ptp.gig/src/org.eclipse.ptp.gig.log&apos;&#x0A;- Original project: &apos;org.eclipse.ptp.gig&apos;&#x0A;- Destination element: &apos;org.eclipse.ptp.gig/src/org.eclipse.ptp.gig.log&apos;&#x0A;- Original element: &apos;org.eclipse.ptp.gig.GkleeLog.java&apos;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="/src&lt;org.eclipse.ptp.gig.log" element1="/src&lt;org.eclipse.ptp.gig{GkleeLog.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1341701993412" units="1" version="1.0"/>
+</session>

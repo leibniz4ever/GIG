@@ -1,0 +1,134 @@
+package org.eclipse.ptp.gig;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+
+public class GIGUtilities {
+
+	public static void processSource(IPath filePath) throws IOException, InterruptedException, CoreException {
+		// make the directory if necessary
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IPath project = filePath.uptoSegment(1);
+		IResource ir = root.findMember(project);
+		IProject iProject;
+		IFolder iGigFolder;
+		if (ir instanceof IProject) {
+			iProject = (IProject) ir;
+			iGigFolder = iProject.getFolder("gig"); //$NON-NLS-1$
+			if (!iGigFolder.exists()) {
+				iGigFolder.create(true, true, null);
+			}
+		}
+		else {
+			return;
+		}
+
+		// now prepare the executable
+		IPath folder = iGigFolder.getFullPath();
+		int segments = filePath.segmentCount();
+		IPath filename = filePath.removeFirstSegments(segments - 1).removeFileExtension();
+		filename = folder.append(filename);
+		IPath exec = filename.addFileExtension("gig"); //$NON-NLS-1$
+		filename = filename.addFileExtension("C"); //$NON-NLS-1$
+
+		// copy the file over to the gig folder
+		IFile origFile = (IFile) root.findMember(filePath);
+		IResource iRes = root.findMember(filename);
+		if (iRes != null && iRes.exists()) {
+			iRes.delete(true, null);
+		}
+		origFile.copy(filename, true, null);
+		root.findMember(folder).refreshLocal(1, null);
+
+		String osString1, osString2;
+		IPath absFileLoc = root.findMember(filename).getLocation();
+		osString1 = absFileLoc.toOSString();
+		osString2 = absFileLoc.removeFileExtension().addFileExtension("gig").toOSString(); //$NON-NLS-1$
+		String command = "gedit robotssh.txt";//"/home/bgibson/gklee/bin/klee-l++ " + osString1 + " -o " + osString2; //$NON-NLS-1$ //$NON-NLS-2$
+		ProcessBuilder pb = new ProcessBuilder(
+				/* "/home/bgibson/gklee/bin/klee-l++", */"/home/bgibson/gklee/llvm-gcc4.2-2.8-x86_64-linux/bin/llvm-g++", osString1, "-o", osString2); //$NON-NLS-1$ //$NON-NLS-2$
+		//pb = new ProcessBuilder("ls"); //$NON-NLS-1$
+		Process process = /* Runtime.getRuntime().exec(command);// */pb.start();
+		BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		Scanner scan = new Scanner(br);
+		String ret = ""; //$NON-NLS-1$
+		while (scan.hasNextLine()) {
+			String line = scan.nextLine();
+			ret += line + '\n';
+			System.out.println(line);
+		}
+		String line = "";
+		while (scan.hasNext()) {
+			String s = scan.next();
+			line += s + ' ';
+		}
+		System.out.println(line);
+		ret += line + '\n';
+		// return ret;
+		// create the executable
+		// runCommandOnShell("/home/bgibson/gklee/bin/klee-l++ " + workspacePath + filePath + " -o " + workspacePath + execFile);
+		//$NON-NLS-1$ //$NON-NLS-2$
+
+		// processExec(execFile);
+	}
+
+	private static void processExec(IPath execFile) throws IOException, InterruptedException, CoreException {
+		String logFile = execFile + ".log"; //$NON-NLS-1$
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		String workspacePath = root.getLocation().toString() + '/';
+		runCommandOnShell("/home/bgibson/gklee/bin/gklee " + workspacePath + execFile + " > " + workspacePath + logFile); //$NON-NLS-1$ //$NON-NLS-2$
+		// IProject project = root.getProject(execFile.substring(0, execFile.indexOf('/')));
+		//IFolder folder = project.getFolder("gig"); //$NON-NLS-1$
+		// folder.refreshLocal(1, null);
+		// processLog(logFile);
+	}
+
+	private static void processLog(IPath logFile) throws CoreException, IOException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IPath rootPath = root.getFullPath();
+		// IPath logPath = rootPath.append('/' + logFile);
+		// IFile file = root.getFile(logPath);
+		// InputStream is = file.getContents();
+		// Scanner scan = new Scanner(is);
+
+		// processScanner(scan);
+
+		// is.close();
+		// scan.close();
+	}
+
+	private static void processScanner(Scanner scan) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private static String runCommandOnShell(String string) throws IOException, InterruptedException {
+		Process process = Runtime.getRuntime().exec(string);
+		process.waitFor();
+		BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		Scanner scan = new Scanner(br);
+		String ret = ""; //$NON-NLS-1$
+		while (scan.hasNextLine()) {
+			String line = scan.nextLine();
+			ret += line + '\n';
+			System.out.println(line);
+		}
+		return ret;
+	}
+
+}

@@ -1,0 +1,4 @@
+1340734777297	Rename field 'readSetIsEmptyInBankConflict'
+1340904862347	Rename local variable 'b'
+1340912382019	Encapsulate field 'concurrencyBugCheckingLevel'
+1340913850094	Rename method 'stopJobs'

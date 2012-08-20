@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config date="1340056572848" transient="false" version="3.0">
+<site enabled="true" policy="USER-EXCLUDE" updateable="true" url="platform:/base/">
+<feature id="org.eclipse.ptp.remote" plugin-identifier="org.eclipse.ptp.remote.core" url="features/org.eclipse.ptp.remote_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.equinox.p2.core.feature" url="features/org.eclipse.equinox.p2.core.feature_1.0.0.v20110519-8290FZ-FWmE7gdAgmOPL2_C/" version="1.0.0.v20110519-8290FZ-FWmE7gdAgmOPL2_C">
+</feature>
+<feature id="org.eclipse.draw2d.source" url="features/org.eclipse.draw2d.source_3.7.0.v20110425-2050-46-7w3122153603161/" version="3.7.0.v20110425-2050-46-7w3122153603161">
+</feature>
+<feature id="org.eclipse.rse.local" plugin-identifier="org.eclipse.rse.services.local" url="features/org.eclipse.rse.local_2.1.300.v201103142315-7B4FKsBgJ9EE9ICQIFYT/" version="2.1.300.v201103142315-7B4FKsBgJ9EE9ICQIFYT">
+</feature>
+<feature id="com.google.appengine.eclipse.sdkbundle.feature" url="features/com.google.appengine.eclipse.sdkbundle.feature_1.6.6/" version="1.6.6">
+</feature>
+<feature id="org.eclipse.cdt.p2" url="features/org.eclipse.cdt.p2_1.0.0.201106081058/" version="1.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.equinox.p2.extras.feature.source" url="features/org.eclipse.equinox.p2.extras.feature.source_1.0.0.v20110519-7A4FD3DiVOManmZvpLOsnBhnPQM3/" version="1.0.0.v20110519-7A4FD3DiVOManmZvpLOsnBhnPQM3">
+</feature>
+<feature id="org.eclipse.help.source" url="features/org.eclipse.help.source_1.3.0.v20110327-7i7uFFiFFt6ZqnbOrMXLd1/" version="1.3.0.v20110327-7i7uFFiFFt6ZqnbOrMXLd1">
+</feature>
+<feature id="org.eclipse.cdt.platform.source" url="features/org.eclipse.cdt.platform.source_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.sdk" url="features/org.eclipse.sdk_3.7.0.v20110426-7Q7xA7DPb31rE2_TcfD-VPkLqq8sfDmLus7XtaSo-7NHB/" version="3.7.0.v20110426-7Q7xA7DPb31rE2_TcfD-VPkLqq8sfDmLus7XtaSo-7NHB">
+</feature>
+<feature id="org.eclipse.cdt.gdb.source" url="features/org.eclipse.cdt.gdb.source_7.0.0.201106081058/" version="7.0.0.201106081058">
+</feature>
+<feature id="org.tigris.subversion.clientadapter.javahl.feature" plugin-identifier="org.tigris.subversion.clientadapter.javahl" url="features/org.tigris.subversion.clientadapter.javahl.feature_1.6.17/" version="1.6.17">
+</feature>
+<feature id="org.eclipse.gef.sdk" plugin-identifier="org.eclipse.gef.source" url="features/org.eclipse.gef.sdk_3.7.0.v20110425-2050-7G7W-A5WNg9RDcRXDHeSRSTUiNLI/" version="3.7.0.v20110425-2050-7G7W-A5WNg9RDcRXDHeSRSTUiNLI">
+</feature>
+<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.equinox.p2.rcp.feature" url="features/org.eclipse.equinox.p2.rcp.feature_1.0.0.v20110519-782EoBqNKGUkVQrqOf0z-BhnPQM3/" version="1.0.0.v20110519-782EoBqNKGUkVQrqOf0z-BhnPQM3">
+</feature>
+<feature id="org.eclipse.equinox.p2.user.ui" url="features/org.eclipse.equinox.p2.user.ui_2.1.1.v20110526-6-Bg9JXOePwKUTU7X0teV1RtDu-e/" version="2.1.1.v20110526-6-Bg9JXOePwKUTU7X0teV1RtDu-e">
+</feature>
+<feature id="org.eclipse.cdt.gnu.build.source" url="features/org.eclipse.cdt.gnu.build.source_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.ptp.services" plugin-identifier="org.eclipse.ptp.services.core" url="features/org.eclipse.ptp.services_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.remote.rse" plugin-identifier="org.eclipse.ptp.remote.rse.core" url="features/org.eclipse.ptp.remote.rse_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.rse.ssh" plugin-identifier="org.eclipse.rse.services.ssh" url="features/org.eclipse.rse.ssh_3.0.300.v201106011538-7A3F9wAkF7BB7FAKECRM/" version="3.0.300.v201106011538-7A3F9wAkF7BB7FAKECRM">
+</feature>
+<feature id="org.eclipse.ptp.rm.lml" plugin-identifier="org.eclipse.ptp.rm.lml.core" url="features/org.eclipse.ptp.rm.lml_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.rm.mpich2" plugin-identifier="org.eclipse.ptp.rm.mpi.mpich2.core" url="features/org.eclipse.ptp.rm.mpich2_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.tigris.subversion.clientadapter.feature" plugin-identifier="org.tigris.subversion.clientadapter" url="features/org.tigris.subversion.clientadapter.feature_1.6.12/" version="1.6.12">
+</feature>
+<feature id="org.eclipse.ptp.rm.jaxb" plugin-identifier="org.eclipse.ptp.rm.jaxb.core" url="features/org.eclipse.ptp.rm.jaxb_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.draw2d" url="features/org.eclipse.draw2d_3.7.0.v20110425-2050-46-7w3122153603161/" version="3.7.0.v20110425-2050-46-7w3122153603161">
+</feature>
+<feature id="org.eclipse.ptp.rm.lml_jaxb" url="features/org.eclipse.ptp.rm.lml_jaxb_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.cvs.source" url="features/org.eclipse.cvs.source_1.3.100.v20110520-0800-7B78FHk8sF7BB7SBB5EYD5/" version="1.3.100.v20110520-0800-7B78FHk8sF7BB7SBB5EYD5">
+</feature>
+<feature id="org.eclipse.ptp.remote.remotetools" plugin-identifier="org.eclipse.ptp.remote.remotetools.core" url="features/org.eclipse.ptp.remote.remotetools_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.rdt" plugin-identifier="org.eclipse.ptp.rdt.core" url="features/org.eclipse.ptp.rdt_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="com.google.gdt.eclipse.suite.e37.feature" plugin-identifier="com.google.gdt.eclipse.suite" url="features/com.google.gdt.eclipse.suite.e37.feature_2.6.1.v201205091048-rel-r37/" version="2.6.1.v201205091048-rel-r37">
+</feature>
+<feature id="org.eclipse.pde" url="features/org.eclipse.pde_3.7.0.v20110504-0800-7b7qFVpFEx2XnmYtj_9RfO7/" version="3.7.0.v20110504-0800-7b7qFVpFEx2XnmYtj_9RfO7">
+</feature>
+<feature id="org.eclipse.equinox.p2.extras.feature" url="features/org.eclipse.equinox.p2.extras.feature_1.0.0.v20110519-7A4FD3DiVOManmZvpLOsnBhnPQM3/" version="1.0.0.v20110519-7A4FD3DiVOManmZvpLOsnBhnPQM3">
+</feature>
+<feature id="org.eclipse.ptp.etfw" url="features/org.eclipse.ptp.etfw_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.cdt.gnu.dsf" url="features/org.eclipse.cdt.gnu.dsf_4.0.0.201106081058/" version="4.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.cdt.gdb" url="features/org.eclipse.cdt.gdb_7.0.0.201106081058/" version="7.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.ptp.pldt" plugin-identifier="org.eclipse.ptp.pldt.common" url="features/org.eclipse.ptp.pldt_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="com.google.gwt.eclipse.sdkbundle.e37.feature" url="features/com.google.gwt.eclipse.sdkbundle.e37.feature_2.4.0.v201205091048-rel-r37/" version="2.4.0.v201205091048-rel-r37">
+</feature>
+<feature id="org.eclipse.rse.dstore" plugin-identifier="org.eclipse.rse.services.dstore" url="features/org.eclipse.rse.dstore_3.3.0.v201106011538-7L78FR7EVVFNNFaMdQf_h/" version="3.3.0.v201106011538-7L78FR7EVVFNNFaMdQf_h">
+</feature>
+<feature id="org.eclipse.ptp.pldt.lapi" url="features/org.eclipse.ptp.pldt.lapi_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.platform" url="features/org.eclipse.platform_3.7.0.v20110530-9gF7UHNFFt4cwE-pkZDJ7oz-mj4OSEIlu9SEv0f/" version="3.7.0.v20110530-9gF7UHNFFt4cwE-pkZDJ7oz-mj4OSEIlu9SEv0f">
+</feature>
+<feature id="org.eclipse.ptp.external" plugin-identifier="org.eclipse.ptp.debug.sdm" url="features/org.eclipse.ptp.external_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.tm.terminal" url="features/org.eclipse.tm.terminal_3.1.0.v201106081330-40-7w312217192441/" version="3.1.0.v201106081330-40-7w312217192441">
+</feature>
+<feature id="org.eclipse.help" plugin-identifier="org.eclipse.help.base" url="features/org.eclipse.help_1.3.0.v20110327-7i7uFFiFFt6ZqnbOrMXLd1/" version="1.3.0.v20110327-7i7uFFiFFt6ZqnbOrMXLd1">
+</feature>
+<feature id="org.eclipse.ptp.rm.jaxb.pbs" url="features/org.eclipse.ptp.rm.jaxb.pbs_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.cdt.gnu.dsf.source" url="features/org.eclipse.cdt.gnu.dsf.source_4.0.0.201106081058/" version="4.0.0.201106081058">
+</feature>
+<feature id="org.tigris.subversion.subclipse" plugin-identifier="org.tigris.subversion.subclipse.core" url="features/org.tigris.subversion.subclipse_1.6.18/" version="1.6.18">
+</feature>
+<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.rcp.source" url="features/org.eclipse.rcp.source_3.7.0.v20110216-9DB5Fm1FpBGy_AaVz-mFamgY/" version="3.7.0.v20110216-9DB5Fm1FpBGy_AaVz-mFamgY">
+</feature>
+<feature id="org.eclipse.cdt.gnu.build" url="features/org.eclipse.cdt.gnu.build_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.pde.source" url="features/org.eclipse.pde.source_3.7.0.v20110504-0800-7b7qFVpFEx2XnmYtj_9RfO7/" version="3.7.0.v20110504-0800-7b7qFVpFEx2XnmYtj_9RfO7">
+</feature>
+<feature id="org.eclipse.cvs" url="features/org.eclipse.cvs_1.3.100.v20110520-0800-7B78FHk8sF7BB7SBB5EYD5/" version="1.3.100.v20110520-0800-7B78FHk8sF7BB7SBB5EYD5">
+</feature>
+<feature id="org.eclipse.gef" url="features/org.eclipse.gef_3.7.0.v20110425-2050-777D-81B2Bz0685C3A6E34272/" version="3.7.0.v20110425-2050-777D-81B2Bz0685C3A6E34272">
+</feature>
+<feature id="org.eclipse.draw2d.sdk" plugin-identifier="org.eclipse.draw2d.source" url="features/org.eclipse.draw2d.sdk_3.7.0.v20110425-2050-7A7I-8yF4F18BBI4E8L558F38x42/" version="3.7.0.v20110425-2050-7A7I-8yF4F18BBI4E8L558F38x42">
+</feature>
+<feature id="org.eclipse.ptp.utils" plugin-identifier="org.eclipse.ptp.utils.core" url="features/org.eclipse.ptp.utils_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.equinox.p2.rcp.feature.source" url="features/org.eclipse.equinox.p2.rcp.feature.source_1.0.0.v20110519-782EoBqNKGUkVQrqOf0z-BhnPQM3/" version="1.0.0.v20110519-782EoBqNKGUkVQrqOf0z-BhnPQM3">
+</feature>
+<feature id="org.eclipse.ptp.rdt.remotetools" plugin-identifier="org.eclipse.ptp.rdt.server.dstore" url="features/org.eclipse.ptp.rdt.remotetools_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.rse.core" url="features/org.eclipse.rse.core_3.3.0.v201106011538-7a7JFYwFC7sReeS7d5k9KA/" version="3.3.0.v201106011538-7a7JFYwFC7sReeS7d5k9KA">
+</feature>
+<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_8.0.0.201106081058/" version="8.0.0.201106081058">
+</feature>
+<feature id="org.eclipse.jdt.source" url="features/org.eclipse.jdt.source_3.7.0.v20110520-0800-7z8gFchFMTdFYKuLqBLqRja9B15B/" version="3.7.0.v20110520-0800-7z8gFchFMTdFYKuLqBLqRja9B15B">
+</feature>
+<feature id="org.eclipse.ptp" url="features/org.eclipse.ptp_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.core" url="features/org.eclipse.ptp.core_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.cdt.gnu.debug.source" url="features/org.eclipse.cdt.gnu.debug.source_7.1.0.201106081058/" version="7.1.0.201106081058">
+</feature>
+<feature id="org.eclipse.rcp" url="features/org.eclipse.rcp_3.7.0.v20110216-9DB5Fm1FpBGy_AaVz-mFamgY/" version="3.7.0.v20110216-9DB5Fm1FpBGy_AaVz-mFamgY">
+</feature>
+<feature id="org.eclipse.jdt" url="features/org.eclipse.jdt_3.7.0.v20110520-0800-7z8gFchFMTdFYKuLqBLqRja9B15B/" version="3.7.0.v20110520-0800-7z8gFchFMTdFYKuLqBLqRja9B15B">
+</feature>
+<feature id="org.eclipse.ptp.rm.slurm" plugin-identifier="org.eclipse.ptp.rm.slurm.core" url="features/org.eclipse.ptp.rm.slurm_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.rm.ibm.pe" plugin-identifier="org.eclipse.ptp.rm.ibm.pe.core" url="features/org.eclipse.ptp.rm.ibm.pe_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.equinox.p2.user.ui.source" url="features/org.eclipse.equinox.p2.user.ui.source_2.1.1.v20110526-6-Bg9JXOePwKUTU7X0teV1RtDu-e/" version="2.1.1.v20110526-6-Bg9JXOePwKUTU7X0teV1RtDu-e">
+</feature>
+<feature id="org.eclipse.rse.useractions" url="features/org.eclipse.rse.useractions_1.1.300.v201103142315-31F8N8s7355353B75DD/" version="1.1.300.v201103142315-31F8N8s7355353B75DD">
+</feature>
+<feature id="org.eclipse.ptp.debug.sdm" plugin-identifier="org.eclipse.ptp.debug.sdm.core" url="features/org.eclipse.ptp.debug.sdm_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.gef.source" url="features/org.eclipse.gef.source_3.7.0.v20110425-2050-777D-81B2Bz0685C3A6E34272/" version="3.7.0.v20110425-2050-777D-81B2Bz0685C3A6E34272">
+</feature>
+<feature id="org.eclipse.ptp.rm.openmpi" plugin-identifier="org.eclipse.ptp.rm.mpi.openmpi.core" url="features/org.eclipse.ptp.rm.openmpi_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.ptp.remotetools" plugin-identifier="org.eclipse.ptp.remotetools.core" url="features/org.eclipse.ptp.remotetools_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.platform.source" url="features/org.eclipse.platform.source_3.7.0.v20110530-9gF7UHNFFt4cwE-pkZDJ7oz-mj4OSEIlu9SEv0f/" version="3.7.0.v20110530-9gF7UHNFFt4cwE-pkZDJ7oz-mj4OSEIlu9SEv0f">
+</feature>
+<feature id="org.eclipse.equinox.p2.core.feature.source" url="features/org.eclipse.equinox.p2.core.feature.source_1.0.0.v20110519-8290FZ-FWmE7gdAgmOPL2_C/" version="1.0.0.v20110519-8290FZ-FWmE7gdAgmOPL2_C">
+</feature>
+<feature id="org.eclipse.rse.terminals" plugin-identifier="org.eclipse.rse.terminals.ui" url="features/org.eclipse.rse.terminals_1.1.0.v201106081330-771Bg9uD6I4AB9LEHNV3552/" version="1.1.0.v201106081330-771Bg9uD6I4AB9LEHNV3552">
+</feature>
+<feature id="org.eclipse.ptp.rm.ibm.ll" plugin-identifier="org.eclipse.ptp.rm.ibm.ll.core" url="features/org.eclipse.ptp.rm.ibm.ll_5.0.0.201106140904/" version="5.0.0.201106140904">
+</feature>
+<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_7.1.0.201106081058/" version="7.1.0.201106081058">
+</feature>
+</site>
+</config>

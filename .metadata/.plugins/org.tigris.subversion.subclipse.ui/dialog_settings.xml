@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="338" key="RevertDialog.location.x"/>
+	<item value="615" key="passwordStores.size.y"/>
+	<item value="25" key="RevertDialog.location.y"/>
+	<item value="1280" key="passwordStores.size.x"/>
+	<item value="3" key="ResolveConflictDialog.lastChoice"/>
+	<item value="613" key="RevertDialog.size.x"/>
+	<item value="750" key="RevertDialog.size.y"/>
+	<item value="400" key="ChooseUrlDialog.location.x"/>
+	<item value="25" key="ChooseUrlDialog.location.y"/>
+	<item value="273" key="ResolveTreeConflict.location.x"/>
+	<item value="500" key="CommitDialog.weights.0"/>
+	<item value="488" key="ChooseUrlDialog.size.x"/>
+	<item value="500" key="CommitDialog.weights.1"/>
+	<item value="367" key="ChooseUrlDialog.size.y"/>
+	<item value="25" key="ResolveTreeConflict.location.y"/>
+	<item value="742" key="ResolveTreeConflict.size.x"/>
+	<item value="602" key="ResolveTreeConflict.size.y"/>
+	<item value="338" key="MarkResolvedDialog.location.x"/>
+	<item value="105" key="MarkResolvedDialog.location.y"/>
+	<item value="25" key="CommitDialog.location.y"/>
+	<item value="0" key="CommitDialog.location.x"/>
+	<item value="25" key="passwordStores.location.y"/>
+	<item value="0" key="passwordStores.location.x"/>
+	<item value="613" key="MarkResolvedDialog.size.x"/>
+	<item value="444" key="MarkResolvedDialog.size.y"/>
+	<item value="1280" key="CommitDialog.size.x"/>
+	<item value="632" key="CommitDialog.size.y"/>
+	<section name="CommitWizard">
+		<item value="false" key="ShowCompare"/>
+		<item value="500" key="VWeight2"/>
+		<item value="500" key="VWeight1"/>
+	</section>
+	<section name="NewLocationWizard">
+	</section>
+</section>

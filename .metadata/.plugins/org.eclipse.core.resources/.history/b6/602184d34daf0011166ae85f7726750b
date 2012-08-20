@@ -1,0 +1,52 @@
+package org.eclipse.ptp.gig.handlers;
+
+import java.io.IOException;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ptp.gig.GIGPlugin;
+import org.eclipse.ptp.gig.GIGUtilities;
+import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+public class GIGHandler extends AbstractHandler {
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IEditorPart editor = HandlerUtil.getActiveEditor(event);
+		IEditorInput input = editor.getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput fileInput = (IFileEditorInput) input;
+			IFile file = fileInput.getFile();
+			final IPath filePath = file.getFullPath();
+
+			// start it in a new thread so as to not block UI thread
+			(new Thread() {
+				@Override
+				public void run() {
+					try {
+						GIGUtilities.processSource(filePath);
+					} catch (IOException e) {
+						StatusManager.getManager().handle(new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.IOException, e));
+					} catch (CoreException e) {
+						StatusManager.getManager().handle(e, GIGPlugin.PLUGIN_ID);
+					} catch (InterruptedException e) {
+						StatusManager.getManager().handle(
+								new Status(Status.ERROR, GIGPlugin.PLUGIN_ID, Messages.InterruptedException, e));
+					}
+				}
+			}).start();
+		}
+
+		return null;
+	}
+}

@@ -1,0 +1,253 @@
+package org.eclipse.ptp.gig.views;
+
+import java.io.IOException;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ptp.gig.GIGPlugin;
+import org.eclipse.ptp.gig.messages.Messages;
+import org.eclipse.ptp.gig.util.GIGUtilities;
+import org.eclipse.ptp.gig.util.IncorrectPasswordException;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.part.ViewPart;
+
+public class ServerView extends ViewPart {
+
+	private TreeViewer treeViewer;
+	private IAction importAction, resetAction, deleteAction, verifyAction;
+	private static ServerView serverView;
+
+	public ServerView() {
+		super();
+		serverView = this;
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		treeViewer = new TreeViewer(parent);
+
+		importAction = new Action() {
+			@Override
+			public void run() {
+				Job job = new Job(Messages.IMPORT) {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						startImport();
+						return Status.OK_STATUS;
+					}
+				};
+				GIGUtilities.startJob(job);
+			}
+		};
+		importAction.setText(Messages.IMPORT);
+		importAction.setToolTipText(Messages.IMPORT);
+		importAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/import.gif")); //$NON-NLS-1$
+
+		resetAction = new Action() {
+			@Override
+			public void run() {
+				reset();
+			}
+		};
+		resetAction.setText(Messages.REFRESH);
+		resetAction.setToolTipText(Messages.REFRESH);
+		resetAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/refresh.gif")); //$NON-NLS-1$
+
+		deleteAction = new Action() {
+			@Override
+			public void run() {
+				deleteRemoteFiles();
+			}
+		};
+		deleteAction.setText(Messages.DELETE_REMOTE_FILE);
+		deleteAction.setToolTipText(Messages.DELETE_REMOTE_FILE);
+		deleteAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/delete_obj.gif")); //$NON-NLS-1$
+
+		verifyAction = new Action() {
+			@Override
+			public void run() {
+				Job job = new Job(Messages.RUN_GKLEE) {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						prepareVerifySelection();
+						return Status.OK_STATUS;
+					}
+				};
+				GIGUtilities.startJob(job);
+			}
+		};
+		verifyAction.setText(Messages.RUN_GKLEE);
+		verifyAction.setToolTipText(Messages.RUN_GKLEE);
+		verifyAction.setImageDescriptor(GIGPlugin.getImageDescriptor("icons/trident.png")); //$NON-NLS-1$
+
+		MenuManager menuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuManager.setRemoveAllWhenShown(true);
+		menuManager.addMenuListener(new IMenuListener() {
+
+			@Override
+			public void menuAboutToShow(IMenuManager manager) {
+				populateManager(manager);
+			}
+
+		});
+		Menu menu = menuManager.createContextMenu(this.treeViewer.getControl());
+		this.treeViewer.getControl().setMenu(menu);
+		this.getSite().registerContextMenu(menuManager, this.treeViewer);
+
+		IActionBars actionBars = this.getViewSite().getActionBars();
+		IToolBarManager toolBarManager = actionBars.getToolBarManager();
+		menuManager.add(this.verifyAction);
+		toolBarManager.add(this.verifyAction);
+		menuManager.add(this.importAction);
+		toolBarManager.add(this.importAction);
+		menuManager.add(this.deleteAction);
+		toolBarManager.add(this.deleteAction);
+		menuManager.add(this.resetAction);
+		toolBarManager.add(this.resetAction);
+
+		reset();
+	}
+
+	protected void prepareVerifySelection() {
+		// TODO let them select which project
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject project = root.getProjects()[0];
+		// TODO put this in a different job so that UI thread is free
+		try {
+			verifySelection(project);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	protected void verifySelection(IProject project) throws IOException, IncorrectPasswordException, CoreException {
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		Object[] objects = selection.toArray();
+		if (objects.length != 1 || ((ServerTreeItem) objects[0]).isFolder()) {
+			// TODO send message that they should have exactly one file selected
+			return;
+		}
+		ServerTreeItem item = (ServerTreeItem) objects[0];
+		GIGUtilities.remoteVerifyFile(project, item);
+	}
+
+	protected void deleteRemoteFiles() {
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		Object[] objects = selection.toArray();
+		try {
+			GIGUtilities.deleteRemoteFiles(objects);
+			this.reset();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void startImport() {
+		// TODO Make this start a dialog for selecting the project
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject project = root.getProjects()[0];
+		doImport(project);
+	}
+
+	protected void populateManager(IMenuManager manager) {
+		manager.add(this.verifyAction);
+		manager.add(this.importAction);
+		manager.add(this.deleteAction);
+		manager.add(this.resetAction);
+	}
+
+	private void doImport(IProject project) {
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		Object[] objects = selection.toArray();
+		Job job = new Job() {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		};
+		try {
+			GIGUtilities.importFoldersAndFiles(project, objects);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * To be called from anywhere to reset this. Does require the current thread to be the UI thread though.
+	 */
+	public void reset() {
+		Object[] expandedElements = treeViewer.getExpandedElements();
+		IContentProvider contentProvider = new ServerContentProvider();
+		treeViewer.setContentProvider(contentProvider);
+		IBaseLabelProvider labelProvider = new ServerLabelProvider();
+		treeViewer.setLabelProvider(labelProvider);
+		ViewerSorter sorter = new ServerTreeItemSorter();
+		treeViewer.setSorter(sorter);
+		try {
+			ServerTreeItem treeRoot = GIGUtilities.getServerFoldersAndFilesRoot();
+			treeViewer.setInput(treeRoot);
+			for (Object o : expandedElements) {
+				treeViewer.expandToLevel(o, 1);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncorrectPasswordException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void setFocus() {
+	}
+
+	public static ServerView getDefault() {
+		return serverView;
+	}
+}

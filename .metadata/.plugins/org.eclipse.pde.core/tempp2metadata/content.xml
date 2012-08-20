@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<repository name='file:/home/bgibson/EclipseWorkspaces/GIG/.metadata/.plugins/org.eclipse.pde.core/tempp2metadata - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1345433535029'/>
+    <property name='p2.compressed' value='false'/>
+  </properties>
+  <references size='2'>
+    <repository uri='http://www.cs.utah.edu/fv/GIG' url='http://www.cs.utah.edu/fv/GIG' type='1' options='0'/>
+    <repository uri='http://www.cs.utah.edu/fv/GIG' url='http://www.cs.utah.edu/fv/GIG' type='0' options='0'/>
+  </references>
+  <units size='5'>
+    <unit id='org.eclipse.ptp.gig.feature.feature.group' version='1.0.0.201208192132' singleton='false'>
+      <update id='org.eclipse.ptp.gig.feature.feature.group' range='[0.0.0,1.0.0.201208192132)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='GIG'/>
+        <property name='org.eclipse.equinox.p2.description' value='The Graphical Explorer of GPU Programs (GIG) is used to help&#xA;debug CUDA programs. It uses the formal verifier GKLEE, developed&#xA;at the University of Utah, to automatically detect many errors&#xA;and problems such as race conditions, deadlocks, and bank conflicts.&#xA;This is all cleanly integrated into an easy-to use eclipse plug-in.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://cs.utah.edu/fv/gklee'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.feature.feature.group' version='1.0.0.201208192132'/>
+      </provides>
+      <requires size='10'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.expressions' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.cdt.core' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.console' range='3.5.100'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig' range='[1.0.0.201208192132,1.0.0.201208192132]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.help' range='[1.3.0.201208192132,1.3.0.201208192132]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.feature.feature.jar' range='[1.0.0.201208192132,1.0.0.201208192132]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='' url=''>
+          END-USER LICENSE AGREEMENT FOR GIG: The Graphical Inquirer of GPU Programs IMPORTANT PLEASE READ THE TERMS AND CONDITIONS OF THIS LICENSE AGREEMENT CAREFULLY BEFORE CONTINUING WITH THIS PROGRAM INSTALL: The Eclipse Foundation and/or Brandon Gibson End-User License Agreement (&quot;EULA&quot;) is a legal agreement between you (either an individual or a single entity) and The Eclipse Foundation and/or Brandon Gibson. for the The Eclipse Foundation and/or Brandon Gibson software product(s) identified above which may include associated software components, media, printed materials, and &quot;online&quot; or electronic documentation (&quot;SOFTWARE PRODUCT&quot;). By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA. This license agreement represents the entire agreement concerning the program between you and The Eclipse Foundation and/or Brandon Gibson, (referred to as &quot;licenser&quot;), and it supersedes any prior proposal, representation, or understanding between the parties. If you do not agree to the terms of this EULA, do not install or use the SOFTWARE PRODUCT.&#xA;&#xA;The SOFTWARE PRODUCT is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. The SOFTWARE PRODUCT is licensed, not sold.&#xA;&#xA;1. GRANT OF LICENSE.&#xA;The SOFTWARE PRODUCT is licensed as follows:&#xA;(a) Installation and Use.&#xA;The Eclipse Foundation and/or Brandon Gibson grants you the right to install and use copies of the SOFTWARE PRODUCT on your computer running a validly licensed copy of the operating system for which the SOFTWARE PRODUCT was designed [e.g., Windows 95, Windows NT, Windows 98, Windows 2000, Windows 2003, Windows XP, Windows ME, Windows Vista].&#xA;(b) Backup Copies.&#xA;You may also make copies of the SOFTWARE PRODUCT as may be necessary for backup and archival purposes.&#xA;&#xA;2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS.&#xA;(a) Maintenance of Copyright Notices.&#xA;You must not remove or alter any copyright notices on any and all copies of the SOFTWARE PRODUCT.&#xA;(b) Distribution.&#xA;You may not distribute registered copies of the SOFTWARE PRODUCT to third parties. Evaluation versions available for download from The Eclipse Foundation and/or Brandon Gibson&apos;s websites may be freely distributed.&#xA;(c) Prohibition on Reverse Engineering, Decompilation, and Disassembly.&#xA;You may not reverse engineer, decompile, or disassemble the SOFTWARE PRODUCT, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation.&#xA;(d) Rental.&#xA;You may not rent, lease, or lend the SOFTWARE PRODUCT.&#xA;(e) Support Services.&#xA;The Eclipse Foundation and/or Brandon Gibson may provide you with support services related to the SOFTWARE PRODUCT (&quot;Support Services&quot;). Any supplemental software code provided to you as part of the Support Services shall be considered part of the SOFTWARE PRODUCT and subject to the terms and conditions of this EULA.&#xA;(f) Compliance with Applicable Laws.&#xA;You must comply with all applicable laws regarding use of the SOFTWARE PRODUCT.&#xA;&#xA;3. TERMINATION&#xA;Without prejudice to any other rights, The Eclipse Foundation and/or Brandon Gibson may terminate this EULA if you fail to comply with the terms and conditions of this EULA. In such event, you must destroy all copies of the SOFTWARE PRODUCT in your possession.&#xA;&#xA;4. COPYRIGHT&#xA;Copyright (c) 2012 Brandon Gibson&#xA;All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;5. NO WARRANTIES&#xA;The Eclipse Foundation and/or Brandon Gibson expressly disclaims any warranty for the SOFTWARE PRODUCT. The SOFTWARE PRODUCT is provided &apos;As Is&apos; without any express or implied warranty of any kind, including but not limited to any warranties of merchantability, noninfringement, or fitness of a particular purpose. The Eclipse Foundation and/or Brandon Gibson does not warrant or assume responsibility for the accuracy or completeness of any information, text, graphics, links or other items contained within the SOFTWARE PRODUCT. The Eclipse Foundation and/or Brandon Gibson makes no warranties respecting any harm that may be caused by the transmission of a computer virus, worm, time bomb, logic bomb, or other such computer program. The Eclipse Foundation and/or Brandon Gibson further expressly disclaims any warranty or representation to Authorized Users or to any third party.&#xA;&#xA;6. LIMITATION OF LIABILITY&#xA;In no event shall The Eclipse Foundation and/or Brandon Gibson be liable for any damages (including, without limitation, lost profits, business interruption, or lost information) rising out of &apos;Authorized Users&apos; use of or inability to use the SOFTWARE PRODUCT, even if The Eclipse Foundation and/or Brandon Gibson has been advised of the possibility of such damages. In no event will The Eclipse Foundation and/or Brandon Gibson be liable for loss of data or for indirect, special, incidental, consequential (including lost profit), or other damages based in contract, tort or otherwise. The Eclipse Foundation and/or Brandon Gibson shall have no liability with respect to the content of the SOFTWARE PRODUCT or any part thereof, including but not limited to errors or omissions contained therein, libel, infringements of rights of publicity, privacy, trademark rights, business interruption, personal injury, loss of privacy, moral rights or the disclosure of confidential information.
+        </license>
+      </licenses>
+      <copyright>
+        Copyright (c) 2012 Brandon Gibson&#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License&#xA;v1.0&#xA;which accompanies this distribution, and is available at&#xA;http://www.eclipse.org/legal/epl-v10.html&#xA;Contributors:&#xA;Brandon Gibson - initial API and implementation and/or initial&#xA;documentation
+      </copyright>
+    </unit>
+    <unit id='org.eclipse.ptp.gig.help' version='1.3.0.201208192132'>
+      <update id='org.eclipse.ptp.gig.help' range='[0.0.0,1.3.0.201208192132)' severity='0'/>
+      <properties size='5'>
+        <property name='df_LT.pluginProvider' value='Eclipse.org'/>
+        <property name='df_LT.pluginName' value='GIG User Guide'/>
+        <property name='org.eclipse.equinox.p2.name' value='%pluginName'/>
+        <property name='org.eclipse.equinox.p2.provider' value='%pluginProvider'/>
+        <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.help' version='1.3.0.201208192132'/>
+        <provided namespace='osgi.bundle' name='org.eclipse.ptp.gig.help' version='1.3.0.201208192132'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.eclipse.ptp.gig.help' version='1.3.0.201208192132'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='2'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.eclipse.ptp.gig.help;singleton:=true&#xA;Bundle-Version: 1.3.0.201208192132
+          </instruction>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='org.eclipse.ptp.gig' version='1.0.0.201208192132'>
+      <update id='org.eclipse.ptp.gig' range='[0.0.0,1.0.0.201208192132)' severity='0'/>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.name' value='GIG'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig' version='1.0.0.201208192132'/>
+        <provided namespace='osgi.bundle' name='org.eclipse.ptp.gig' version='1.0.0.201208192132'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='8'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.expressions' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.expressions' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.cdt.core' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='3.5.100'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='org.eclipse.ptp.gig' version='1.0.0.201208192132'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: org.eclipse.ptp.gig; singleton:=true&#xA;Bundle-Version: 1.0.0.201208192132
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='GIG' version='1.0.0.2--cLSug6773573I5K7597'>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='GIG'/>
+        <property name='org.eclipse.equinox.p2.type.category' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='GIG' version='1.0.0.2--cLSug6773573I5K7597'/>
+      </provides>
+      <requires size='1'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.feature.feature.group' range='[1.0.0.201208192132,1.0.0.201208192132]'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+    </unit>
+    <unit id='org.eclipse.ptp.gig.feature.feature.jar' version='1.0.0.201208192132'>
+      <properties size='3'>
+        <property name='org.eclipse.equinox.p2.name' value='GIG'/>
+        <property name='org.eclipse.equinox.p2.description' value='The Graphical Explorer of GPU Programs (GIG) is used to help&#xA;debug CUDA programs. It uses the formal verifier GKLEE, developed&#xA;at the University of Utah, to automatically detect many errors&#xA;and problems such as race conditions, deadlocks, and bank conflicts.&#xA;This is all cleanly integrated into an easy-to use eclipse plug-in.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://cs.utah.edu/fv/gklee'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ptp.gig.feature.feature.jar' version='1.0.0.201208192132'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='org.eclipse.ptp.gig.feature' version='1.0.0.201208192132'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='org.eclipse.ptp.gig.feature' version='1.0.0.201208192132'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='' url=''>
+          END-USER LICENSE AGREEMENT FOR GIG: The Graphical Inquirer of GPU Programs IMPORTANT PLEASE READ THE TERMS AND CONDITIONS OF THIS LICENSE AGREEMENT CAREFULLY BEFORE CONTINUING WITH THIS PROGRAM INSTALL: The Eclipse Foundation and/or Brandon Gibson End-User License Agreement (&quot;EULA&quot;) is a legal agreement between you (either an individual or a single entity) and The Eclipse Foundation and/or Brandon Gibson. for the The Eclipse Foundation and/or Brandon Gibson software product(s) identified above which may include associated software components, media, printed materials, and &quot;online&quot; or electronic documentation (&quot;SOFTWARE PRODUCT&quot;). By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA. This license agreement represents the entire agreement concerning the program between you and The Eclipse Foundation and/or Brandon Gibson, (referred to as &quot;licenser&quot;), and it supersedes any prior proposal, representation, or understanding between the parties. If you do not agree to the terms of this EULA, do not install or use the SOFTWARE PRODUCT.&#xA;&#xA;The SOFTWARE PRODUCT is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. The SOFTWARE PRODUCT is licensed, not sold.&#xA;&#xA;1. GRANT OF LICENSE.&#xA;The SOFTWARE PRODUCT is licensed as follows:&#xA;(a) Installation and Use.&#xA;The Eclipse Foundation and/or Brandon Gibson grants you the right to install and use copies of the SOFTWARE PRODUCT on your computer running a validly licensed copy of the operating system for which the SOFTWARE PRODUCT was designed [e.g., Windows 95, Windows NT, Windows 98, Windows 2000, Windows 2003, Windows XP, Windows ME, Windows Vista].&#xA;(b) Backup Copies.&#xA;You may also make copies of the SOFTWARE PRODUCT as may be necessary for backup and archival purposes.&#xA;&#xA;2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS.&#xA;(a) Maintenance of Copyright Notices.&#xA;You must not remove or alter any copyright notices on any and all copies of the SOFTWARE PRODUCT.&#xA;(b) Distribution.&#xA;You may not distribute registered copies of the SOFTWARE PRODUCT to third parties. Evaluation versions available for download from The Eclipse Foundation and/or Brandon Gibson&apos;s websites may be freely distributed.&#xA;(c) Prohibition on Reverse Engineering, Decompilation, and Disassembly.&#xA;You may not reverse engineer, decompile, or disassemble the SOFTWARE PRODUCT, except and only to the extent that such activity is expressly permitted by applicable law notwithstanding this limitation.&#xA;(d) Rental.&#xA;You may not rent, lease, or lend the SOFTWARE PRODUCT.&#xA;(e) Support Services.&#xA;The Eclipse Foundation and/or Brandon Gibson may provide you with support services related to the SOFTWARE PRODUCT (&quot;Support Services&quot;). Any supplemental software code provided to you as part of the Support Services shall be considered part of the SOFTWARE PRODUCT and subject to the terms and conditions of this EULA.&#xA;(f) Compliance with Applicable Laws.&#xA;You must comply with all applicable laws regarding use of the SOFTWARE PRODUCT.&#xA;&#xA;3. TERMINATION&#xA;Without prejudice to any other rights, The Eclipse Foundation and/or Brandon Gibson may terminate this EULA if you fail to comply with the terms and conditions of this EULA. In such event, you must destroy all copies of the SOFTWARE PRODUCT in your possession.&#xA;&#xA;4. COPYRIGHT&#xA;Copyright (c) 2012 Brandon Gibson&#xA;All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html&#xA;&#xA;5. NO WARRANTIES&#xA;The Eclipse Foundation and/or Brandon Gibson expressly disclaims any warranty for the SOFTWARE PRODUCT. The SOFTWARE PRODUCT is provided &apos;As Is&apos; without any express or implied warranty of any kind, including but not limited to any warranties of merchantability, noninfringement, or fitness of a particular purpose. The Eclipse Foundation and/or Brandon Gibson does not warrant or assume responsibility for the accuracy or completeness of any information, text, graphics, links or other items contained within the SOFTWARE PRODUCT. The Eclipse Foundation and/or Brandon Gibson makes no warranties respecting any harm that may be caused by the transmission of a computer virus, worm, time bomb, logic bomb, or other such computer program. The Eclipse Foundation and/or Brandon Gibson further expressly disclaims any warranty or representation to Authorized Users or to any third party.&#xA;&#xA;6. LIMITATION OF LIABILITY&#xA;In no event shall The Eclipse Foundation and/or Brandon Gibson be liable for any damages (including, without limitation, lost profits, business interruption, or lost information) rising out of &apos;Authorized Users&apos; use of or inability to use the SOFTWARE PRODUCT, even if The Eclipse Foundation and/or Brandon Gibson has been advised of the possibility of such damages. In no event will The Eclipse Foundation and/or Brandon Gibson be liable for loss of data or for indirect, special, incidental, consequential (including lost profit), or other damages based in contract, tort or otherwise. The Eclipse Foundation and/or Brandon Gibson shall have no liability with respect to the content of the SOFTWARE PRODUCT or any part thereof, including but not limited to errors or omissions contained therein, libel, infringements of rights of publicity, privacy, trademark rights, business interruption, personal injury, loss of privacy, moral rights or the disclosure of confidential information.
+        </license>
+      </licenses>
+      <copyright>
+        Copyright (c) 2012 Brandon Gibson&#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License&#xA;v1.0&#xA;which accompanies this distribution, and is available at&#xA;http://www.eclipse.org/legal/epl-v10.html&#xA;Contributors:&#xA;Brandon Gibson - initial API and implementation and/or initial&#xA;documentation
+      </copyright>
+    </unit>
+  </units>
+</repository>

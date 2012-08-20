@@ -1,0 +1,16 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Main {
+
+	public static void main(String[] args) {
+		Pattern pattern = Pattern.compile("(ab(\\p{Lower}))"); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher("abcabcabcabc"); //$NON-NLS-1$
+		boolean b = matcher.matches();
+		int numGroups = matcher.groupCount();
+		String group;
+		for (int i = 0; i < numGroups; i++) {
+			group = matcher.group(i);
+		}
+	}
+}

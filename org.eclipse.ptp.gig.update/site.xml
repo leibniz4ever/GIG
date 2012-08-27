@@ -3,8 +3,12 @@
    <description name="GIG" url="http://www.cs.utah.edu/fv/GIG">
       Latest Builds are hosted by University of Utah&apos;s Formal Verification research group of the Computer Science Department. For stable builds, update from the Parallel Tools Platform&apos;s server.
    </description>
-   <feature url="features/org.eclipse.ptp.gig.feature_1.0.0.201208192132.jar" id="org.eclipse.ptp.gig.feature" version="1.0.0.201208192132">
-      <category name="GIG"/>
+   <feature url="features/org.eclipse.ptp.gig.feature_1.0.0.201208231331.jar" id="org.eclipse.ptp.gig.feature" version="1.0.0.201208231331">
+      <category name="GIG: The Graphical Inquirer of GPU Programs"/>
    </feature>
-   <category-def name="GIG" label="GIG"/>
+   <category-def name="GIG: The Graphical Inquirer of GPU Programs" label="GIG: The Graphical Inquirer of GPU Programs">
+      <description>
+         Formal Verification debugging environment for CUDA programs.
+      </description>
+   </category-def>
 </site>

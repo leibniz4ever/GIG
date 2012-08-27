@@ -337,4 +337,8 @@ public class GIGView extends ViewPart {
 			}
 		}
 	}
+
+	public void cleanTrees() {
+		reset();
+	}
 }

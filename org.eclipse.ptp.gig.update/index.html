@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style>@import url("web/site.css");</style>
+<title>GEM - Eclipse Plugin Update Site</title>
+</head>
+
+<body bgcolor="#FFFFFE" topmargin="0" marginheight="0" leftmargin="0" marginwidth="0">
+
+<table border=0 cellspacing=0 cellpadding=0 width="100%" bgcolor="#990000" >
+    <tr>
+        <td rowspan="2" width="99" bgcolor="#000000">
+
+            <a href="http://www.utah.edu"><img src="web/images/mountain_graphic2.gif" alt="University of Utah" border=0 height=90 width=99></a>
+        </td>
+        <td align=right width="100%" height="21">
+            <table border=0 cellspacing=0 cellpadding=0 height="21" >
+                <form method="get" action="http://search.utah.edu:8765/custom/query.html"><input type="hidden" name="qpurl" value="url:www.cs.utah.edu"><input type="hidden" name="qpname" value="School of Computing"><br></form>
+                <tr>
+                    <td align=right>
+                        <img src="web/images/search.gif" alt="Search" hspace=5 border=0 valign="bottom" height=13 width=48><input type="text" name="qt" size="10" style="font-size:x-small">
+                    </td>
+
+                    <td align=right>
+                        <input type="image" src="http://www.cs.utah.edu/images/go.gif" alt="Search the School of Computing" border="0" width="22" height="13" vspace="0" hspace="5" valign="bottom" name="image">
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align=center height="69" background="web/images/masthead_fill.gif"><img src="web/images/masthead_soc.gif" ALT="School of Computing" BORDER=0 usemap="#menu" height=69 width=453></td>
+
+    </tr>
+</table>
+
+<map name="menu">
+    <area shape="rect" coords="37,46,89,66" href="http://www.cs.utah.edu/" alt="Home">
+    <area shape="rect" coords="102,46,158,66" href="http://www.cs.utah.edu/people/" alt="People">
+    <area shape="rect" coords="175,46,247,66" href="http://www.cs.utah.edu/research/" alt="Research">
+    <area shape="rect" coords="259,46,342,66" href="http://www.cs.utah.edu/admissions/" alt="Admissions">
+    <area shape="rect" coords="357,46,425,66" href="http://www.cs.utah.edu/school/sitemap.html" alt="Site Map">
+</map>
+&nbsp;
+
+<div class="Section1">
+<script type="text/javascript">
+var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+var d = new Date();
+var curr_date = d.getDate();
+var sup = "";
+if (curr_date == 1 || curr_date == 21 || curr_date ==31)
+   { sup = "st"; }
+else if (curr_date == 2 || curr_date == 22)
+   { sup = "nd"; }
+else if (curr_date == 3 || curr_date == 23)
+   { sup = "rd"; }
+else
+   { sup = "th"; }
+var curr_month = d.getMonth();
+var curr_year = d.getFullYear();
+document.write("Today is the " + curr_date + "<SUP>" + sup + "</SUP> " + "of " + m_names[curr_month] +", " + curr_year);
+</script>
+
+<br>&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; width: 60%;" width="60%">
+        <p><b><span style="font-size: 24pt; font-family: Verdana;">GIG - Graphical Inquirer of GPU Programs<br>
+        Eclipse Plug-in Update Site</span></b> </p>
+
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 1.5pt; width: 60%;" width="60%">
+        <p><b><span style="font-size: 14pt; font-family: Verdana;">v1.3.0</span></b> </p>
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+<p>
+<b>Welcome to the Gauss Group's GIG Eclipse Update Site at the University of Utah School of Computing.</b><br>
+</p>
+
+&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; background: rgb(150, 150, 150);">
+        <p><b><span style="font-size: 13.5pt; color: white;">About GIG</span></b></p>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>
+GIG is an Eclipse plugin developed to be a graphical front-end for the formal verification tool, gklee,
+developed by the Gauss Group at the Univeristy of Utah.
+
+<br><br>
+Some parts of GIG are designed specifically for Linux, but the most important functionality is platform independent.
+</h4>
+
+<p>
+Gklee itself can be installed separately, but is not required. GIG adds a graphical front-end to gklee that allows easy use.
+GIG can communicate with a server that has gklee installed. This allows computers without gklee installed to still use GIG.
+</p>
+
+Using gklee, GIG can find many potential bugs and inefficiencies including:
+<ul>
+	<li>
+		Data Races
+	</li>
+	<li>
+		Deadlocks
+	</li>
+	<li>
+		Bank Conflicts
+	</li>
+	<li>
+		Uncoalesced Memory Access
+	</li>
+	<li>
+		Assertion Violations
+	</li>
+	<li>
+		Missing Volatiles
+	</li>
+</ul>
+
+&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; background: rgb(150, 150, 150);">
+        <p><b><span style="font-size: 13.5pt; color: white;">Gklee Overview and Installation</span></b></p>
+      </td>
+    </tr>
+  </tbody>
+
+</table>
+
+<p>
+<i>NOTE: It is NOT required for gklee to be installed and working properly before using GIG, unless you use the local verification option.</i>
+</p>
+<ul>
+    <li>
+        Everything gklee related can be found <a href="http://www.cs.utah.edu/formal_verification/GKLEE/">here</a>. 
+    </li>
+</ul>
+
+&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; background: rgb(150, 150, 150)">
+        <p><b><span style="font-size: 13.5pt; color: white;">Installing GIG</span></b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+To install GIG, open Eclipse Juno. Go to Help->Install New Software and add a new update site: http://www.cs.utah.edu/formal_verification/GIG.
+Check the box next to GIG and click Next. Continue through the install wizard.
+Also be sure to switch to the C/C++ Perspective by Window->Open Perspective->Other->C/C++. If the views associated with GIG still don't show up,
+go to Window->Show View->Other->GIG then select and open the views.
+</p>
+
+<p>
+You may wish to first install CDT and PTP. You can follow the steps on the <a href="http://wiki.eclipse.org/PTP/release_notes/3.0">
+Eclipse Wiki page</a> to install CDT (C/C++ Development Tools) and PTP (Parallel Tools Platform).
+</p>
+
+<p>
+More detailed information on the Eclipse CDT is <a href="http://www.eclipse.org/cdt/">here</a>
+<br>
+More detailed information on the Eclipse PTP is <a href="http://www.eclipse.org/ptp/">here</a>
+</p>
+
+&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; background: rgb(150, 150, 150)">
+        <p><b><span style="font-size: 13.5pt; color: white;">GIG Documentation and Source Code</span></b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+    <li>
+        Some GIG help documentation is also available here on this site: <a href="help/toc.html">Help page</a>
+    </li>
+    <li>
+        The source code for the GIG Eclipse Plugin is released under the <a href="http://www.eclipse.org/org/documents/epl-v10.php">Eclipse Public License</a>
+        and is available on <a href="https://github.com/leibniz4ever/GIG">github</a>.
+    </li>
+</ul>
+
+&nbsp;
+<table style="width: 100%;" border="0" cellpadding="0" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding: 1.5pt; background: rgb(150, 150, 150)">
+        <p><b><span style="font-size: 13.5pt; color: white;">Using GIG</span></b></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+		<img alt="Test" src="web/images/Server_Verify_Edited.png">
+<br>
+	<li>
+		The GIG Server View is used for interaction with the server. Here you can view the remote workspace. You can also verify files remotely.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Server_Import_Edited.png">
+<br>
+	<li>
+		Files from the remote workspace can be imported into your workspace by selecting them and clicking the import button.
+	</li>
+<hr>
+	<li>
+		Files can be deleted remotely, or local files can also be uploaded by right clicking on them in your workspace, Selecting GIG->Send...
+		The default workspace is write protected, so uploading and deleting won't work on it. We'll have to change the remote workspace under Window(Eclipse on Mac)->Preferences->Parallel Tools->GIG
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Preferences_Edited.png">
+<br>
+	<li>
+		The default workspace is gklee, and has many examples to download and verify. In order to upload we need to change this to another one. Currently, there is no formal sign up procedure.
+		One can simply type in a new workspace name and a password for it. Note that all subsequent accesses to that workspace will require the given password.
+	</li>
+<br>
+	<li>
+		You can either connect to the default server, or connect to a different one. In order to connect to a different server, you probably need to set it up yourself.
+	</li>
+<br>
+	<li>
+		You can also specify which project to import the files to by default.
+	</li>
+<br>
+	<li>
+		By switching to another remote workspace, you now have full access. You may need to refresh the view to see the changes. The refresh button is next to the delete button.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Server_Delete_Edited.png">
+	<li>
+		In other workspaces, you can delete items. You can also upload files and folders by selecting them in the local workspace and right-click->GIG->Send...
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Formally_Verify_Edited.png">
+	<li>
+		You can also open up a file and verify it by clicking the toolbar icon. This will automatically send the file to the server, verify it, and send the log file back.
+		You can also verify a file by right clicking it and selecting GIG->Verify... When sending to the server, be sure that all necessary include files are there.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Warnings_Edited.png">
+	<li>
+		Whenever a verification succeeds, the log file is parsed and displayed in the GIG View. Each tab of the GIGView has an icon that indicates the severity of the problem. How these icons are generated can be set on the Preferences page.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/GIGView_Edited.png">
+	<li>
+		If a tab indicates a problem, you may select it and traverse the trees. Double clicking tree items can hook you into the source files and the log file. 
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Local_Execution_Pref_Edited.png">
+	<li>
+		Gklee can also be setup locally and prevent the need for a server execution at all. If gklee is installed locally, you can turn on the local verification by checking the box on the Preference page.
+	</li>
+<br>
+	<li>
+		A correct install of gklee includes setting a few environment variables. These need to be set in Eclipse as well. The default values are a guess, but may not be accurate for your system.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Cancel_Edited.png">
+	<li>
+		If a local verification is taking too long, you may cancel it.
+	</li>
+<hr>
+		<img alt="Test" src="web/images/Local_Verify_Edited.png">
+	<li>
+		One indicator that you are in fact verifying locally is that the .gig binary file will be created locally instead of remotely.
+	</li>
+</ul>
+
+
+<hr>
+<center>
+<p>
+
+School of Computing * 50 S. Central Campus Dr. Rm. 3190 * Salt Lake City, UT 
+84112 * <A href="mailto:isp-dev@cs.utah.edu">isp-dev@cs.utah.edu</a><br>
+<a href="http://www.utah.edu/disclaimer/disclaimer_home.html">Disclaimer</a>
+</p>
+</center>
+
+<i>Last updated on 01/17/11</i>
+
+<br><br>
+
+</div>
+
+</body>
+
+</html>

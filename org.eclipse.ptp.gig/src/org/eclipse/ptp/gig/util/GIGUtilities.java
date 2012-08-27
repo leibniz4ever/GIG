@@ -449,7 +449,10 @@ public class GIGUtilities {
 				// First send the file over
 				final List<IFile> fileList = new ArrayList<IFile>();
 				fileList.add(origFile);
-				sendFoldersAndFiles(new ArrayList<IFolder>(), fileList);
+
+				if (!preferenceStore.getString(Messages.USERNAME).equals(preferenceStore.getDefaultString(Messages.USERNAME))) {
+					sendFoldersAndFiles(new ArrayList<IFolder>(), fileList);
+				}
 
 				requestVerification(origFile.getProject(), origFile.getProjectRelativePath());
 

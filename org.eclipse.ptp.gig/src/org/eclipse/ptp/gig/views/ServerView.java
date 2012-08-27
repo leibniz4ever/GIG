@@ -280,6 +280,7 @@ public class ServerView extends ViewPart {
 		final IWorkbenchPage page = window.getActivePage();
 		try {
 			page.showView(GIGView.ID);
+			GIGView.getDefault().cleanTrees();
 		} catch (final PartInitException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.ERROR, GIGPlugin.PLUGIN_ID, Messages.PART_INIT_EXCEPTION, e));

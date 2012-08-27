@@ -84,6 +84,7 @@ public class PopupHandler extends AbstractHandler {
 				// same with the ServerView
 				try {
 					page.showView(GIGView.ID);
+					GIGView.getDefault().cleanTrees();
 					page.showView(ServerView.ID);
 				} catch (final PartInitException e) {
 					StatusManager.getManager().handle(

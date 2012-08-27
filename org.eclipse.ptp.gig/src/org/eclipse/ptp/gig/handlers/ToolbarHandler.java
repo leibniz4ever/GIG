@@ -60,6 +60,7 @@ public class ToolbarHandler extends AbstractHandler {
 			final IWorkbenchPage page = window.getActivePage();
 			try {
 				page.showView(GIGView.ID);
+				GIGView.getDefault().cleanTrees();
 				page.showView(ServerView.ID);
 			} catch (final PartInitException e) {
 				StatusManager.getManager().handle(
